@@ -51,18 +51,18 @@
   --secondary-foreground: oklch(0.22 0.02 250);
   --muted: oklch(0.96 0.005 240);
   --muted-foreground: oklch(0.48 0.015 250);
-  --accent: oklch(0.68 0.18 45);             /* ember orange */
-  --accent-foreground: oklch(0.15 0.02 250);
+  --accent: #059ed8;                         /* brand blue */
+  --accent-foreground: #ffffff;
   --destructive: oklch(0.58 0.22 27);
   --destructive-foreground: oklch(0.98 0.003 240);
   --border: oklch(0.9 0.008 240);
   --input: oklch(0.9 0.008 240);
-  --ring: oklch(0.68 0.18 45);
+  --ring: #059ed8;
 
   --steel: oklch(0.28 0.02 250);
   --steel-dark: oklch(0.16 0.015 250);
-  --ember: oklch(0.68 0.18 45);
-  --ember-glow: oklch(0.75 0.18 55);
+  --ember: #059ed8;
+  --ember-glow: #38bdf8;
 }
 
 @layer base {

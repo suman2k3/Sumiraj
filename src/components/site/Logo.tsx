@@ -12,7 +12,7 @@ export function Logo({ className = "", iconOnly = false, lightText = false }: Lo
       <img
         src={logoImg}
         alt="Sumiraj Logo"
-        className="h-10 w-auto object-contain shrink-0"
+        className="h-12 w-auto object-contain shrink-0"
       />
       {!iconOnly && (
         <span className={`font-display text-xl font-bold tracking-tight uppercase ${lightText ? "text-white" : "text-slate-900"}`}>

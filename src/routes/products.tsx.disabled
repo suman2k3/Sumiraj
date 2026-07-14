@@ -1,0 +1,121 @@
+import { createFileRoute } from "@tanstack/react-router";
+import { Layout } from "@/components/site/Layout";
+import { PageHero } from "@/components/site/PageHero";
+import heroImg from "@/assets/hero-products.jpg";
+import valveImg from "@/assets/img-valve.jpg";
+import gearsImg from "@/assets/img-gears.jpg";
+import pipesImg from "@/assets/img-pipes.jpg";
+import cncImg from "@/assets/img-cnc.jpg";
+import { CheckCircle2 } from "lucide-react";
+
+export const Route = createFileRoute("/products")({
+  head: () => ({
+    meta: [
+      { title: "Products & Solutions — Pre-Engineered Buildings & Steel | Sumiraj" },
+      { name: "description", content: "Explore our range: Pre-Engineered Buildings (PEB), industrial steel warehouses, structural frames, and custom steel fabrications." },
+      { property: "og:title", content: "Sumiraj Products" },
+      { property: "og:description", content: "Full industrial catalogue — PEB structures, steel warehouses, custom frames, and heavy fabrications." },
+    ],
+  }),
+  component: Products,
+});
+
+const categories = [
+  { name: "Pre-Engineered Buildings (PEB)", img: valveImg, specs: ["Clear spans up to 60m+", "Optimized structural frames", "Insulated sandwich panels", "Rapid turn-key assembly"] },
+  { name: "Industrial Warehouses", img: pipesImg, specs: ["Heavy-duty columns & rafters", "High clearance & crane bays", "Advanced rainwater drainage", "Ember-orange accents"] },
+  { name: "Structural Steel Trusses", img: gearsImg, specs: ["Precision-welded members", "Custom structural geometries", "Shot-blasted & primed", "Traceable raw materials"] },
+  { name: "Custom Steel Fabrications", img: cncImg, specs: ["5-axis plate cutting", "Robotic double-sided welding", "Mezzanines & platforms", "ISO 9001 quality check"] },
+];
+
+function Products() {
+  return (
+    <Layout>
+      <PageHero
+        image={heroImg}
+        breadcrumb="Products"
+        eyebrow="Engineered Range"
+        title={<>Every component,<br />ready to ship.</>}
+        subtitle="Over 4,000 SKUs across four flagship categories — plus bespoke tooling for one-off critical builds."
+      />
+
+      <section className="container-x mx-auto max-w-[1400px] py-24">
+        <div className="max-w-2xl">
+          <p className="eyebrow">Product Categories</p>
+          <h2 className="mt-3 font-display text-4xl font-bold md:text-5xl">Four families. Endless configurations.</h2>
+        </div>
+        <div className="mt-14 space-y-10">
+          {categories.map((c, i) => (
+            <div key={c.name} className={`grid gap-8 rounded-sm border bg-card p-6 md:grid-cols-2 md:gap-14 md:p-10 ${i % 2 ? "md:[&>img]:col-start-2" : ""}`}>
+              <img src={c.img} alt={c.name} className="aspect-[4/3] w-full rounded-sm object-cover" loading="lazy" />
+              <div className={`flex flex-col justify-center ${i % 2 ? "md:col-start-1 md:row-start-1" : ""}`}>
+                <div className="text-xs uppercase tracking-[0.3em] text-accent">Category 0{i + 1}</div>
+                <h3 className="mt-3 font-display text-3xl font-bold md:text-4xl">{c.name}</h3>
+                <p className="mt-3 text-muted-foreground">Engineered for the harshest service conditions, every unit traceable from raw billet to final inspection stamp.</p>
+                <ul className="mt-6 space-y-2">
+                  {c.specs.map((s) => (
+                    <li key={s} className="flex items-start gap-2 text-sm">
+                      <CheckCircle2 size={18} className="mt-0.5 shrink-0 text-accent" />
+                      <span>{s}</span>
+                    </li>
+                  ))}
+                </ul>
+                <a href="#specs" className="mt-8 inline-flex w-fit items-center gap-2 rounded-sm bg-[var(--steel-dark)] px-5 py-3 text-sm font-semibold text-primary-foreground hover:bg-black">
+                  View Specifications
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section id="specs" className="bg-[var(--steel-dark)] py-24 text-primary-foreground">
+        <div className="container-x mx-auto max-w-[1400px]">
+          <div className="max-w-2xl">
+            <p className="eyebrow">Standard Specifications</p>
+            <h2 className="mt-3 font-display text-4xl font-bold md:text-5xl">Materials we work with daily.</h2>
+          </div>
+          <div className="mt-12 overflow-x-auto rounded-sm border border-white/10">
+            <table className="w-full text-sm">
+              <thead className="bg-white/5 text-xs uppercase tracking-wider text-accent">
+                <tr>
+                  <th className="p-4 text-left">Grade</th>
+                  <th className="p-4 text-left">Standard</th>
+                  <th className="p-4 text-left">Application</th>
+                  <th className="p-4 text-left">Max Temp</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-white/10">
+                {[
+                  ["A105", "ASTM", "General piping, valves", "425 °C"],
+                  ["F304 / F316", "ASTM A182", "Stainless service", "816 °C"],
+                  ["LF2", "ASTM A350", "Low-temperature service", "-46 °C"],
+                  ["F11 / F22", "Cr-Mo Alloy", "High-temperature steam", "593 °C"],
+                  ["Duplex 2205", "UNS S31803", "Marine & offshore", "300 °C"],
+                  ["Inconel 625", "UNS N06625", "Corrosive / high-temp", "982 °C"],
+                ].map((r) => (
+                  <tr key={r[0]} className="hover:bg-white/5">
+                    {r.map((cell, ci) => (
+                      <td key={ci} className={`p-4 ${ci === 0 ? "font-display font-semibold text-accent" : "text-primary-foreground/80"}`}>{cell}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section className="container-x mx-auto max-w-[1400px] py-24">
+        <div className="max-w-2xl">
+          <p className="eyebrow">Industries Served</p>
+          <h2 className="mt-3 font-display text-4xl font-bold md:text-5xl">Where our products end up.</h2>
+        </div>
+        <div className="mt-10 flex flex-wrap gap-3">
+          {["Oil & Gas Upstream", "Refining", "Petrochemical", "LNG Terminals", "Automotive OEM", "Aerospace", "Nuclear Power", "Thermal Power", "Wind Energy", "Shipbuilding", "Chemical Processing", "Water Treatment", "Steel Plants", "Cement", "Sugar & Distilleries", "Pharmaceutical"].map((t) => (
+            <span key={t} className="rounded-full border border-border bg-card px-5 py-2.5 text-sm font-medium hover:border-accent hover:text-accent">{t}</span>
+          ))}
+        </div>
+      </section>
+    </Layout>
+  );
+}

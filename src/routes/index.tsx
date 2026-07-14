@@ -26,6 +26,7 @@ import valveImg from "@/assets/img-valve.jpg";
 import gearsImg from "@/assets/img-gears.jpg";
 import pipesImg from "@/assets/img-pipes.jpg";
 import heroHomeImg from "@/assets/hero-home.jpg";
+import warehouseImg from "@/assets/img-warehouse.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -370,14 +371,26 @@ Every Sumiraj Pre-Engineered Building is designed as an integrated structural sy
 
       {/* SEO Section 2: PEB Construction Process Workflow */}
       <section className="container-x mx-auto max-w-[1400px] py-24">
-        <div className="max-w-3xl">
-          <span className="eyebrow">WORKFLOW & EXECUTION</span>
-          <h2 className="mt-3 font-display text-4xl font-extrabold text-slate-900 sm:text-5xl">
-            From Concept to Completion — Our Turnkey PEB Process
-          </h2>
-          <p className="mt-4 text-lg text-slate-600">
-            Every project follows a streamlined engineering and execution process that ensures precision, faster delivery, and uncompromising quality. From initial consultation and structural design to manufacturing, installation, and final handover, Sumiraj delivers complete turnkey Pre-Engineered Building (PEB) solutions for industrial, commercial, warehousing, and infrastructure projects.
-          </p>
+        <div className="grid gap-12 lg:grid-cols-12 lg:items-center">
+          <div className="lg:col-span-7">
+            <span className="eyebrow">WORKFLOW & EXECUTION</span>
+            <h2 className="mt-3 font-display text-4xl font-extrabold text-slate-900 sm:text-5xl">
+              From Concept to Completion — Our Turnkey PEB Process
+            </h2>
+            <p className="mt-4 text-base sm:text-lg text-slate-600 leading-relaxed">
+              Every project follows a streamlined engineering and execution process that ensures precision, faster delivery, and uncompromising quality. From initial consultation and structural design to manufacturing, installation, and final handover, Sumiraj delivers complete turnkey Pre-Engineered Building (PEB) solutions for industrial, commercial, warehousing, and infrastructure projects.
+            </p>
+          </div>
+          <div className="lg:col-span-5">
+            <div className="relative overflow-hidden rounded-xl border border-slate-100 shadow-lg aspect-[4/3]">
+              <img 
+                src={warehouseImg} 
+                alt="Sumiraj PEB Warehouse construction process" 
+                className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+                loading="lazy"
+              />
+            </div>
+          </div>
         </div>
 
         <div className="mt-16 grid gap-8 lg:grid-cols-3">

@@ -9,28 +9,20 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as QualityRouteImport } from './routes/quality'
 import { Route as ManufacturingRouteImport } from './routes/manufacturing'
-import { Route as GalleryRouteImport } from './routes/gallery'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PortfolioIndexRouteImport } from './routes/portfolio.index'
+import { Route as BuildingSystemsIndexRouteImport } from './routes/building-systems.index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
+import { Route as PortfolioIdRouteImport } from './routes/portfolio.$id'
+import { Route as BuildingSystemsSystemIdRouteImport } from './routes/building-systems.$systemId'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 
-const QualityRoute = QualityRouteImport.update({
-  id: '/quality',
-  path: '/quality',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ManufacturingRoute = ManufacturingRouteImport.update({
   id: '/manufacturing',
   path: '/manufacturing',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const GalleryRoute = GalleryRouteImport.update({
-  id: '/gallery',
-  path: '/gallery',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -48,9 +40,29 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PortfolioIndexRoute = PortfolioIndexRouteImport.update({
+  id: '/portfolio/',
+  path: '/portfolio/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuildingSystemsIndexRoute = BuildingSystemsIndexRouteImport.update({
+  id: '/building-systems/',
+  path: '/building-systems/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BlogIndexRoute = BlogIndexRouteImport.update({
   id: '/blog/',
   path: '/blog/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PortfolioIdRoute = PortfolioIdRouteImport.update({
+  id: '/portfolio/$id',
+  path: '/portfolio/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BuildingSystemsSystemIdRoute = BuildingSystemsSystemIdRouteImport.update({
+  id: '/building-systems/$systemId',
+  path: '/building-systems/$systemId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlogSlugRoute = BlogSlugRouteImport.update({
@@ -63,32 +75,38 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
-  '/gallery': typeof GalleryRoute
   '/manufacturing': typeof ManufacturingRoute
-  '/quality': typeof QualityRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/building-systems/$systemId': typeof BuildingSystemsSystemIdRoute
+  '/portfolio/$id': typeof PortfolioIdRoute
   '/blog/': typeof BlogIndexRoute
+  '/building-systems/': typeof BuildingSystemsIndexRoute
+  '/portfolio/': typeof PortfolioIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
-  '/gallery': typeof GalleryRoute
   '/manufacturing': typeof ManufacturingRoute
-  '/quality': typeof QualityRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/building-systems/$systemId': typeof BuildingSystemsSystemIdRoute
+  '/portfolio/$id': typeof PortfolioIdRoute
   '/blog': typeof BlogIndexRoute
+  '/building-systems': typeof BuildingSystemsIndexRoute
+  '/portfolio': typeof PortfolioIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/contact': typeof ContactRoute
-  '/gallery': typeof GalleryRoute
   '/manufacturing': typeof ManufacturingRoute
-  '/quality': typeof QualityRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/building-systems/$systemId': typeof BuildingSystemsSystemIdRoute
+  '/portfolio/$id': typeof PortfolioIdRoute
   '/blog/': typeof BlogIndexRoute
+  '/building-systems/': typeof BuildingSystemsIndexRoute
+  '/portfolio/': typeof PortfolioIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -96,65 +114,59 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/contact'
-    | '/gallery'
     | '/manufacturing'
-    | '/quality'
     | '/blog/$slug'
+    | '/building-systems/$systemId'
+    | '/portfolio/$id'
     | '/blog/'
+    | '/building-systems/'
+    | '/portfolio/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
     | '/contact'
-    | '/gallery'
     | '/manufacturing'
-    | '/quality'
     | '/blog/$slug'
+    | '/building-systems/$systemId'
+    | '/portfolio/$id'
     | '/blog'
+    | '/building-systems'
+    | '/portfolio'
   id:
     | '__root__'
     | '/'
     | '/about'
     | '/contact'
-    | '/gallery'
     | '/manufacturing'
-    | '/quality'
     | '/blog/$slug'
+    | '/building-systems/$systemId'
+    | '/portfolio/$id'
     | '/blog/'
+    | '/building-systems/'
+    | '/portfolio/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   ContactRoute: typeof ContactRoute
-  GalleryRoute: typeof GalleryRoute
   ManufacturingRoute: typeof ManufacturingRoute
-  QualityRoute: typeof QualityRoute
   BlogSlugRoute: typeof BlogSlugRoute
+  BuildingSystemsSystemIdRoute: typeof BuildingSystemsSystemIdRoute
+  PortfolioIdRoute: typeof PortfolioIdRoute
   BlogIndexRoute: typeof BlogIndexRoute
+  BuildingSystemsIndexRoute: typeof BuildingSystemsIndexRoute
+  PortfolioIndexRoute: typeof PortfolioIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/quality': {
-      id: '/quality'
-      path: '/quality'
-      fullPath: '/quality'
-      preLoaderRoute: typeof QualityRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/manufacturing': {
       id: '/manufacturing'
       path: '/manufacturing'
       fullPath: '/manufacturing'
       preLoaderRoute: typeof ManufacturingRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/gallery': {
-      id: '/gallery'
-      path: '/gallery'
-      fullPath: '/gallery'
-      preLoaderRoute: typeof GalleryRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -178,11 +190,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/portfolio/': {
+      id: '/portfolio/'
+      path: '/portfolio'
+      fullPath: '/portfolio/'
+      preLoaderRoute: typeof PortfolioIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/building-systems/': {
+      id: '/building-systems/'
+      path: '/building-systems'
+      fullPath: '/building-systems/'
+      preLoaderRoute: typeof BuildingSystemsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/blog/': {
       id: '/blog/'
       path: '/blog'
       fullPath: '/blog/'
       preLoaderRoute: typeof BlogIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/portfolio/$id': {
+      id: '/portfolio/$id'
+      path: '/portfolio/$id'
+      fullPath: '/portfolio/$id'
+      preLoaderRoute: typeof PortfolioIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/building-systems/$systemId': {
+      id: '/building-systems/$systemId'
+      path: '/building-systems/$systemId'
+      fullPath: '/building-systems/$systemId'
+      preLoaderRoute: typeof BuildingSystemsSystemIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blog/$slug': {
@@ -199,11 +239,13 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   ContactRoute: ContactRoute,
-  GalleryRoute: GalleryRoute,
   ManufacturingRoute: ManufacturingRoute,
-  QualityRoute: QualityRoute,
   BlogSlugRoute: BlogSlugRoute,
+  BuildingSystemsSystemIdRoute: BuildingSystemsSystemIdRoute,
+  PortfolioIdRoute: PortfolioIdRoute,
   BlogIndexRoute: BlogIndexRoute,
+  BuildingSystemsIndexRoute: BuildingSystemsIndexRoute,
+  PortfolioIndexRoute: PortfolioIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -18,8 +18,8 @@ export function Footer() {
             <ul className="mt-4 space-y-2 text-sm text-primary-foreground/70">
               <li><Link to="/about" className="hover:text-accent">About Us</Link></li>
               <li><Link to="/manufacturing" className="hover:text-accent">Manufacturing</Link></li>
-              <li><Link to="/quality" className="hover:text-accent">Quality</Link></li>
-              <li><Link to="/gallery" className="hover:text-accent">Gallery</Link></li>
+              <li><Link to="/building-systems/pre-engineered-buildings" className="hover:text-accent">Building Systems</Link></li>
+              <li><Link to="/portfolio" className="hover:text-accent">Portfolio</Link></li>
             </ul>
           </div>
           {/* <div>

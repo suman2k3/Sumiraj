@@ -1,4 +1,5 @@
 import logoImg from "@/assets/logo.webp";
+import logoLightImg from "@/assets/logo-light.webp";
 
 interface LogoProps {
   className?: string;
@@ -6,19 +7,14 @@ interface LogoProps {
   lightText?: boolean;
 }
 
-export function Logo({ className = "", iconOnly = false, lightText = false }: LogoProps) {
+export function Logo({ className = "", lightText = false }: LogoProps) {
   return (
-    <div className={`flex items-center gap-2.5 ${className}`}>
+    <div className={`inline-flex items-center ${className}`}>
       <img
-        src={logoImg}
-        alt="Sumiraj Logo"
-        className="h-12 w-auto object-contain shrink-0"
+        src={lightText ? logoLightImg : logoImg}
+        alt="Sumiraj - Fabricating Your Future"
+        className="h-12 sm:h-14 w-auto object-contain shrink-0"
       />
-      {!iconOnly && (
-        <span className={`font-display text-xl font-bold tracking-tight uppercase ${lightText ? "text-white" : "text-slate-900"}`}>
-          SUMIRAJ<span className="text-accent font-black">.</span>
-        </span>
-      )}
     </div>
   );
 }

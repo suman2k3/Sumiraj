@@ -3,7 +3,7 @@ import { Layout } from "@/components/site/Layout";
 import { PageHero } from "@/components/site/PageHero";
 import { buildingSystems } from "@/lib/buildingSystemsData";
 import { motion } from "framer-motion";
-import heroImg from "@/assets/hero-manufacturing.jpg";
+import heroImg from "@/assets/hero-peb-system.jpg";
 import { Columns, Layers, Building2, Cog, ArrowRight, Shield, Award, Sparkles, Wrench } from "lucide-react";
 
 export const Route = createFileRoute("/building-systems/")({
@@ -38,8 +38,8 @@ function BuildingSystemsIndex() {
     },
     {
       icon: Cog,
-      title: "Accessories & Trims",
-      desc: "Natural ridge ventilators, turbo fans, sky panels, louvers, gutters, and flashing designed to complete the building's utility and aesthetics.",
+      title: "Standing Seam Roofing System",
+      desc: "Concealed-fix roofing system designed for reliable weather protection, durability, and a clean architectural finish.",
       to: "/building-systems/standing-seam-roofing-system"
     }
   ];
@@ -92,7 +92,7 @@ function BuildingSystemsIndex() {
                     to={comp.to} 
                     className="inline-flex items-center gap-1.5 text-xs font-bold text-accent hover:text-orange-600 transition"
                   >
-                    View System details <ArrowRight size={14} />
+                    View System Details <ArrowRight size={14} />
                   </Link>
                 </div>
               ))}

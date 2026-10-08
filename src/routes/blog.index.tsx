@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
 import { Layout } from "@/components/site/Layout";
 import { PageHero } from "@/components/site/PageHero";
-import { blogPosts } from "@/lib/blogsData";
+import { useBlogPosts } from "@/lib/blogsStore";
 import heroImg from "@/assets/hero-gallery.jpg"; // Using a beautiful existing industrial hero asset
 import { Search, Calendar, Clock, ArrowRight, Mail, Sparkles, Filter } from "lucide-react";
 
@@ -22,6 +22,7 @@ const categories = ["All", "PEB Systems", "Engineering", "Manufacturing", "Cold 
 type Category = typeof categories[number];
 
 function BlogListing() {
+  const blogPosts = useBlogPosts();
   const [selectedCat, setSelectedCat] = useState<Category>("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [visibleCount, setVisibleCount] = useState(6);
@@ -40,7 +41,7 @@ function BlogListing() {
         : cleanContent;
       return { ...post, excerpt };
     });
-  }, []);
+  }, [blogPosts]);
 
   // Filter posts based on search query and category
   const filteredPosts = useMemo(() => {

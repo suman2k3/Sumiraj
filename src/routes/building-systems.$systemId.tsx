@@ -5,7 +5,24 @@ import { PageHero } from "@/components/site/PageHero";
 import { buildingSystems } from "@/lib/buildingSystemsData";
 import { motion } from "framer-motion";
 import heroImg from "@/assets/hero-manufacturing.jpg"; // reuse premium manufacturing banner
-import { CheckCircle2, ArrowRight, Shield, Award, Sparkles, Wrench } from "lucide-react";
+import pebHeroImg from "@/assets/hero-peb-system.jpg";
+import primaryFramingHeroImg from "@/assets/hero-primary-framing.jpg";
+import secondaryFramingHeroImg from "@/assets/hero-secondary-framing.jpg";
+import roofingCladdingHeroImg from "@/assets/hero-roofing-cladding.jpg";
+import standingSeamHeroImg from "@/assets/hero-standing-seam.jpg";
+import mezzanineHeroImg from "@/assets/hero-mezzanine-floors.jpg";
+import erectionInstallationHeroImg from "@/assets/hero-erection-installation.jpg";
+import { CheckCircle2, ArrowRight, ArrowLeft, Shield, Award, Sparkles, Wrench, ChevronRight } from "lucide-react";
+
+const systemBannerMap: Record<string, string> = {
+  "pre-engineered-buildings": pebHeroImg,
+  "primary-framing": primaryFramingHeroImg,
+  "secondary-framing-systems": secondaryFramingHeroImg,
+  "roofing-and-wall-cladding-systems": roofingCladdingHeroImg,
+  "standing-seam-roofing-system": standingSeamHeroImg,
+  "mezzanine-floors": mezzanineHeroImg,
+  "erection-and-installation": erectionInstallationHeroImg,
+};
 
 export const Route = createFileRoute("/building-systems/$systemId")({
   head: ({ params }) => {
@@ -216,6 +233,9 @@ function BuildingSystemPage() {
     { title: "Durability & Standard Compliance", desc: "Every structure is constructed to comply with strict national and international codes, guaranteeing lifetime security.", icon: Shield }
   ];
 
+  const systemBanner = systemBannerMap[systemId];
+  const currentVisualImg = systemBanner || system.gallery[0];
+
   return (
     <Layout>
       <motion.div
@@ -224,13 +244,49 @@ function BuildingSystemPage() {
         exit={{ opacity: 0, y: -15 }}
         transition={{ duration: 0.4 }}
       >
-        <PageHero
-          image={heroImg}
-          breadcrumb="Building Systems"
-          eyebrow="Precision Engineering"
-          title={<span className="line-clamp-2">{system.title}</span>}
-          subtitle={system.description}
-        />
+        {/* Custom Hero Section */}
+        {systemBanner ? (
+          <section className="bg-slate-50 border-b border-slate-200/80 py-8 md:py-12">
+            <div className="container-x mx-auto max-w-[1400px] space-y-6">
+              {/* Header Info */}
+              <div>
+                <div className="mb-2.5 flex items-center gap-2 text-xs text-slate-500">
+                  <Link to="/" className="hover:text-accent transition">Home</Link>
+                  <ChevronRight size={12} />
+                  <Link to="/building-systems/" className="hover:text-accent transition">Building Systems</Link>
+                  <ChevronRight size={12} />
+                  <span className="text-accent font-semibold">{system.title}</span>
+                </div>
+                <p className="eyebrow">PRECISION ENGINEERING</p>
+                <h1 className="mt-1.5 max-w-4xl font-display text-3xl font-extrabold leading-tight text-slate-900 md:text-5xl">
+                  {system.title}
+                </h1>
+                {system.description && (
+                  <p className="mt-3 max-w-3xl text-sm leading-relaxed text-slate-600 sm:text-base md:text-lg">
+                    {system.description}
+                  </p>
+                )}
+              </div>
+
+              {/* Responsive Hero Image Banner - Contained in max-w-[1400px] matching website content width */}
+              <div className="w-full overflow-hidden rounded-2xl border border-slate-200 shadow-sm bg-white">
+                <img 
+                  src={systemBanner} 
+                  alt={`${system.title} Banner`} 
+                  className="w-full h-auto block rounded-2xl max-h-[600px] object-contain mx-auto"
+                />
+              </div>
+            </div>
+          </section>
+        ) : (
+          <PageHero
+            image={heroImg}
+            breadcrumb="Building Systems"
+            eyebrow="Precision Engineering"
+            title={<span className="line-clamp-2">{system.title}</span>}
+            subtitle={system.description}
+          />
+        )}
 
         {/* Content Section */}
         <section className="py-16 md:py-24 bg-white">
@@ -246,22 +302,18 @@ function BuildingSystemPage() {
               <aside className="space-y-6 lg:sticky lg:top-24">
                 
                 {/* Image Gallery */}
-                {system.gallery.length > 0 && (
+                {(system.gallery.length > 0 || currentVisualImg) && (
                   <div className="rounded-xl border border-slate-150 p-6 bg-slate-50 shadow-sm">
                     <h4 className="font-display text-xs font-bold uppercase tracking-widest text-slate-500 border-b border-slate-200 pb-3 flex items-center gap-2 mb-4">
                       Technical Visuals
                     </h4>
-                    <div className="grid gap-4 grid-cols-2">
-                      {system.gallery.map((imgUrl, idx) => (
-                        <div key={idx} className="relative overflow-hidden rounded-lg border border-slate-200 aspect-[4/3] bg-white shadow-sm">
-                          <img 
-                            src={imgUrl} 
-                            alt={`${system.title} rendering ${idx + 1}`} 
-                            className="h-full w-full object-cover hover:scale-105 transition duration-500" 
-                            loading="lazy"
-                          />
-                        </div>
-                      ))}
+                    <div className="relative overflow-hidden rounded-lg border border-slate-200 aspect-[16/10] bg-white shadow-sm">
+                      <img 
+                        src={currentVisualImg} 
+                        alt={`${system.title} visual rendering`} 
+                        className="h-full w-full object-contain hover:scale-105 transition duration-500" 
+                        loading="lazy"
+                      />
                     </div>
                   </div>
                 )}

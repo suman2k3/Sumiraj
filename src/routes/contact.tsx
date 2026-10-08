@@ -3,7 +3,8 @@ import { useState, type ReactNode } from "react";
 import { Layout } from "@/components/site/Layout";
 import { PageHero } from "@/components/site/PageHero";
 import heroImg from "@/assets/hero-contact.jpg";
-import { Phone, Mail, MapPin, Clock, Send } from "lucide-react";
+import { Phone, Mail, MapPin, Send, Loader2, CheckCircle2, AlertCircle } from "lucide-react";
+import { submitEnquiryApi, EnquiryData } from "@/lib/enquiryApi";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -20,7 +21,83 @@ export const Route = createFileRoute("/contact")({
 const inputCls = "block w-full rounded-sm border border-border bg-background px-4 py-3 text-sm outline-none transition focus:border-accent focus:ring-2 focus:ring-accent/20";
 
 function Contact() {
-  const [sent, setSent] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submittedResponse, setSubmittedResponse] = useState<EnquiryData | null>(null);
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const [formData, setFormData] = useState({
+    fullName: "",
+    company: "",
+    email: "",
+    mobile: "",
+    sourceLocation: "",
+    destinationLocation: "",
+    shipmentWeight: "",
+    enquiryType: "Website Enquiry",
+    message: "",
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setErrorMsg("");
+    setSubmitting(true);
+
+    const res = await submitEnquiryApi({
+      fullName: formData.fullName,
+      company: formData.company,
+      email: formData.email,
+      mobile: formData.mobile,
+      sourceLocation: formData.sourceLocation,
+      destinationLocation: formData.destinationLocation,
+      shipmentWeight: formData.shipmentWeight,
+      enquiryType: formData.enquiryType,
+      message: formData.message,
+    });
+
+    setSubmitting(false);
+
+    if (res.success) {
+      setSubmittedResponse(res.data || {
+        _id: "demo",
+        fullName: formData.fullName,
+        company: formData.company,
+        email: formData.email,
+        mobile: formData.mobile,
+        sourceLocation: formData.sourceLocation,
+        destinationLocation: formData.destinationLocation,
+        shipmentWeight: formData.shipmentWeight,
+        enquiryType: formData.enquiryType,
+        message: formData.message,
+        status: "pending",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      });
+    } else {
+      setErrorMsg(res.message || "Failed to submit enquiry. Please try again.");
+    }
+  };
+
+  const handleReset = () => {
+    setSubmittedResponse(null);
+    setErrorMsg("");
+    setFormData({
+      fullName: "",
+      company: "",
+      email: "",
+      mobile: "",
+      sourceLocation: "",
+      destinationLocation: "",
+      shipmentWeight: "",
+      enquiryType: "Website Enquiry",
+      message: "",
+    });
+  };
+
   return (
     <Layout>
       <PageHero
@@ -37,34 +114,159 @@ function Contact() {
           <div className="rounded-sm border bg-card p-8 md:p-12">
             <p className="eyebrow">Inquiry Form</p>
             <h2 className="mt-3 font-display text-3xl font-bold md:text-4xl">Tell us what you need.</h2>
-            {sent ? (
-              <div className="mt-10 rounded-sm border border-accent bg-accent/10 p-8 text-center">
-                <div className="font-display text-2xl font-bold text-accent">Thank you.</div>
-                <p className="mt-2 text-muted-foreground">Your inquiry has been received. Our sales team will respond within 48 hours.</p>
+            
+            {submittedResponse ? (
+              <div className="mt-10 rounded-lg border border-emerald-500/40 bg-emerald-50/50 p-8 dark:bg-emerald-950/20 text-left space-y-4">
+                <div className="flex items-center gap-3 text-emerald-600 dark:text-emerald-400">
+                  <CheckCircle2 size={32} />
+                  <div>
+                    <h3 className="font-display text-2xl font-bold">Enquiry Submitted Successfully!</h3>
+                    <p className="text-xs text-muted-foreground">Reference ID: <span className="font-mono font-bold text-foreground">{submittedResponse._id}</span></p>
+                  </div>
+                </div>
+
+                <div className="grid gap-3 rounded-md bg-white p-6 dark:bg-slate-900 border text-xs text-slate-700 dark:text-slate-300 md:grid-cols-2">
+                  <div><span className="font-bold">Full Name:</span> {submittedResponse.fullName}</div>
+                  <div><span className="font-bold">Company:</span> {submittedResponse.company || "N/A"}</div>
+                  <div><span className="font-bold">Email:</span> {submittedResponse.email}</div>
+                  <div><span className="font-bold">Mobile:</span> {submittedResponse.mobile}</div>
+                  <div><span className="font-bold">Source Location:</span> {submittedResponse.sourceLocation || "N/A"}</div>
+                  <div><span className="font-bold">Destination Location:</span> {submittedResponse.destinationLocation || "N/A"}</div>
+                  <div><span className="font-bold">Shipment Weight:</span> {submittedResponse.shipmentWeight || "N/A"}</div>
+                  <div><span className="font-bold">Enquiry Type:</span> {submittedResponse.enquiryType}</div>
+                  <div className="md:col-span-2"><span className="font-bold">Message:</span> {submittedResponse.message}</div>
+                  <div className="md:col-span-2"><span className="font-bold">Status:</span> <span className="uppercase font-semibold text-amber-600 bg-amber-100 dark:bg-amber-950 px-2 py-0.5 rounded text-[10px]">{submittedResponse.status}</span></div>
+                </div>
+
+                <p className="text-sm text-muted-foreground">Our sales and engineering team will review your inquiry and contact you shortly.</p>
+                
+                <button
+                  onClick={handleReset}
+                  className="inline-flex items-center gap-2 rounded bg-accent px-5 py-2.5 text-xs font-semibold text-accent-foreground hover:brightness-110"
+                >
+                  Submit Another Enquiry
+                </button>
               </div>
             ) : (
-              <form onSubmit={(e) => { e.preventDefault(); setSent(true); }} className="mt-8 space-y-5">
+              <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+                {errorMsg && (
+                  <div className="rounded-sm border border-red-500/50 bg-red-50 p-4 text-xs font-medium text-red-700 dark:bg-red-950/40 dark:text-red-300 flex items-center gap-2">
+                    <AlertCircle size={16} />
+                    {errorMsg}
+                  </div>
+                )}
+
                 <div className="grid gap-5 md:grid-cols-2">
-                  <Field label="Full Name" required><input required className={inputCls} placeholder="Jane Engineer" /></Field>
-                  <Field label="Company"><input className={inputCls} placeholder="Acme Corp." /></Field>
-                  <Field label="Email" required><input required type="email" className={inputCls} placeholder="jane@acme.com" /></Field>
-                  <Field label="Phone"><input className={inputCls} placeholder="+91 …" /></Field>
+                  <Field label="Full Name" required>
+                    <input
+                      name="fullName"
+                      required
+                      value={formData.fullName}
+                      onChange={handleChange}
+                      className={inputCls}
+                      placeholder="Suman Kumar"
+                    />
+                  </Field>
+                  <Field label="Company">
+                    <input
+                      name="company"
+                      value={formData.company}
+                      onChange={handleChange}
+                      className={inputCls}
+                      placeholder="Test Company"
+                    />
+                  </Field>
+                  <Field label="Email" required>
+                    <input
+                      name="email"
+                      required
+                      type="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      className={inputCls}
+                      placeholder="your_email@gmail.com"
+                    />
+                  </Field>
+                  <Field label="Mobile Number" required>
+                    <input
+                      name="mobile"
+                      required
+                      type="tel"
+                      value={formData.mobile}
+                      onChange={handleChange}
+                      className={inputCls}
+                      placeholder="9876543210"
+                    />
+                  </Field>
+                  <Field label="Source Location">
+                    <input
+                      name="sourceLocation"
+                      value={formData.sourceLocation}
+                      onChange={handleChange}
+                      className={inputCls}
+                      placeholder="Delhi"
+                    />
+                  </Field>
+                  <Field label="Destination Location">
+                    <input
+                      name="destinationLocation"
+                      value={formData.destinationLocation}
+                      onChange={handleChange}
+                      className={inputCls}
+                      placeholder="Noida"
+                    />
+                  </Field>
+                  <Field label="Shipment Weight / Quantity">
+                    <input
+                      name="shipmentWeight"
+                      value={formData.shipmentWeight}
+                      onChange={handleChange}
+                      className={inputCls}
+                      placeholder="e.g. 50 Tons / Test"
+                    />
+                  </Field>
+                  <Field label="Enquiry Type">
+                    <select
+                      name="enquiryType"
+                      value={formData.enquiryType}
+                      onChange={handleChange}
+                      className={inputCls}
+                    >
+                      <option value="Website Enquiry">Website Enquiry</option>
+                      <option value="Pre-Engineered Buildings (PEB)">Pre-Engineered Buildings (PEB)</option>
+                      <option value="Industrial Warehouses">Industrial Warehouses</option>
+                      <option value="Structural Steel Trusses">Structural Steel Trusses</option>
+                      <option value="Custom Steel Fabrications">Custom Steel Fabrications</option>
+                    </select>
+                  </Field>
                 </div>
-                <Field label="Product / Category">
-                  <select className={inputCls} defaultValue="">
-                    <option value="" disabled>Select a product family…</option>
-                    <option>Pre-Engineered Buildings (PEB)</option>
-                    <option>Industrial Warehouses</option>
-                    <option>Structural Steel Trusses</option>
-                    <option>Custom Steel Fabrications</option>
-                    <option>Custom / Bespoke</option>
-                  </select>
-                </Field>
+
                 <Field label="Specification / Message" required>
-                  <textarea required rows={5} className={inputCls} placeholder="Grade, size, quantity, delivery target…" />
+                  <textarea
+                    name="message"
+                    required
+                    rows={4}
+                    value={formData.message}
+                    onChange={handleChange}
+                    className={inputCls}
+                    placeholder="This is a test enquiry from Postman / details of your project..."
+                  />
                 </Field>
-                <button className="inline-flex items-center gap-2 rounded-sm bg-accent px-6 py-3.5 text-sm font-semibold text-accent-foreground hover:brightness-110">
-                  Submit Inquiry <Send size={16} />
+
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="inline-flex items-center gap-2 rounded-sm bg-accent px-6 py-3.5 text-sm font-semibold text-accent-foreground hover:brightness-110 disabled:opacity-50"
+                >
+                  {submitting ? (
+                    <>
+                      <Loader2 size={16} className="animate-spin" /> Submitting Enquiry...
+                    </>
+                  ) : (
+                    <>
+                      Submit Enquiry <Send size={16} />
+                    </>
+                  )}
                 </button>
               </form>
             )}
@@ -72,7 +274,7 @@ function Contact() {
 
           <aside className="space-y-4">
             {[
-              { icon: MapPin, t: "Head Office & Plant I", d: "SUMIRAJ INDUSTRIES PRIVATE LIMITED \nI-46, Site-5, Kasna Industrial Area,\n Greater Noida - 201306, Uttar Pradesh, India" },
+              { icon: MapPin, t: "Head Office & Plant I", d: "SUMIRAJ INDUSTRIES PRIVATE LIMITED \nPlot No. I-46, Site-V, Kasna, Surajpur Industrial Area,\nGreater Noida, G.B. Nagar (U.P.) Pin - 201310" },
               { icon: Phone, t: "Call Us", d: "+91-9997904348" },
               { icon: Mail, t: "Email", d: "info@sumiraj.com" },
              /* { icon: Clock, t: "Working Hours", d: "Mon – Sat · 09:00 – 18:00 IST\nEmergency: 24×7" },*/

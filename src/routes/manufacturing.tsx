@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Layout } from "@/components/site/Layout";
 import { PageHero } from "@/components/site/PageHero";
+import { QualityProcess } from "@/components/site/QualityProcess";
 import heroImg from "@/assets/hero-manufacturing.jpg";
 import cncImg from "@/assets/img-cnc.jpg";
 import robotImg from "@/assets/img-robot.jpg";
@@ -20,12 +21,12 @@ export const Route = createFileRoute("/manufacturing")({
 });
 
 const process = [
-  { n: "01", t: "Design & Simulation", d: "CAD modelling, FEA stress analysis and DFM review before a single billet is cut." },
-  { n: "02", t: "Forging", d: "Hammer and press forging up to 1,600 tons, controlled cooling for grain refinement." },
-  { n: "03", t: "Heat Treatment", d: "Normalise, quench-and-temper, PWHT in computer-controlled bogey hearth furnaces." },
-  { n: "04", t: "CNC Machining", d: "5-axis milling, turning and boring centres achieving tolerances of ±0.005 mm." },
-  { n: "05", t: "Welding & Assembly", d: "Certified WPS/PQR — TIG, MIG, SAW — automated cells for repeatability." },
-  { n: "06", t: "Testing & Dispatch", d: "NDT, hydro-test, dimensional inspection, packing and export documentation." },
+  { n: "01", t: "Design & Detailing", d: "Our engineering team develops detailed structural drawings, connection designs, and fabrication ready shop drwaings using advanced design software." },
+  { n: "02", t: "CNC Steel Cutting", d: "Steel plates and sections are cut with precision CNC machinery to ensure dimensional accuracy and efficient fabrications." },
+  { n: "03", t: "Welding & Fabrication", d: "Columns, rafters, and built-up members are fabricated by experienced welders following approved quality procedures." },
+  { n: "04", t: "Surface Preparation", d: "All fabricated components undergo shot blasting to remove impurities and prepare surfaces for protective coatings." },
+  { n: "05", t: "Painting & Coating", d: "Components receive high-quality primer and protective coatings to enhance corrosion resistance and service life." },
+  { n: "06", t: "Quality Inspection & Dispatch", d: "Every component is inspected for dimensions, weld quality, and coating standards before dispatch to projeect sites." },
 ];
 
 function Manufacturing() {
@@ -36,7 +37,7 @@ function Manufacturing() {
         breadcrumb="Manufacturing"
         eyebrow="How We Build"
         title={<>Precision Manufacturing.<br />Engineered for Performance.</>}
-        subtitle="A six-stage integrated process — from billet to shipment — under one roof."
+        subtitle="Every Sumiraj is manufactured using advanced fabrication processes, strict quality control, and precision engineering to ensure durability, accuracy, and long-term performance."
         height="lg"
       />
 
@@ -75,32 +76,102 @@ function Manufacturing() {
         </div>
       </section>
 
-      <section className="container-x mx-auto max-w-[1400px] py-24">
-        <div className="max-w-2xl">
-          <p className="eyebrow">Machines & Capacity</p>
-          <h2 className="mt-3 font-display text-4xl font-bold md:text-5xl">The tools behind the tolerance.</h2>
+      {/* The Tools Behind the Tolerance Section */}
+      <section className="container-x mx-auto max-w-[1400px] py-24 border-t border-slate-200/60">
+        {/* Section Header */}
+        <div className="mx-auto max-w-3xl text-center mb-16">
+          <p className="eyebrow justify-center">THE TOOLS BEHIND THE TOLERANCE</p>
+          <h2 className="mt-3 font-display text-4xl font-extrabold text-slate-900 sm:text-5xl">
+            The Tools Behind the Tolerance
+          </h2>
+          <p className="mt-4 text-base sm:text-lg text-slate-600 leading-relaxed">
+            Our manufacturing capabilities are supported by specialized equipment that enables precision fabrication, controlled finishing, quality inspection, and efficient material handling.
+          </p>
         </div>
-        <div className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+
+        {/* 3x2 Desktop, 2x3 Tablet, 1x6 Mobile Responsive Grid */}
+        <div className="grid gap-8 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
           {[
-            { img: cncImg, t: "DMG Mori 5-Axis CNC", d: "12 units · ±0.005mm precision" },
-            { img: welderImg, t: "Fronius TPS 500i Welders", d: "Certified TIG/MIG stations" },
-            { img: robotImg, t: "KUKA Robotic Cells", d: "Automated welding & handling" },
-            { img: cncImg, t: "Doosan Turning Centres", d: "Ø 800 mm × 3,000 mm capacity" },
-            { img: welderImg, t: "SAW Weld Line", d: "Longitudinal & circumferential" },
-            { img: robotImg, t: "Coordinate Measuring Machine", d: "Zeiss Contura, 1200×1500 mm" },
-          ].map((m, i) => (
-            <div key={i} className="group overflow-hidden rounded-sm bg-card">
-              <div className="aspect-[4/3] overflow-hidden">
-                <img src={m.img} alt={m.t} className="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy" />
+            {
+              num: "01",
+              title: "CNC Plasma Cutting Machine",
+              desc: "Precision cutting of steel components according to engineered dimensions and profiles.",
+              img: cncImg,
+              alt: "CNC plasma cutting machine used for steel fabrication"
+            },
+            {
+              num: "02",
+              title: "H-Beam Welding Line",
+              desc: "Efficient and consistent welding of H-beam structural components for accurate fabrication.",
+              img: welderImg,
+              alt: "H-beam welding line used for structural steel fabrication"
+            },
+            {
+              num: "03",
+              title: "Shot Blasting Machine",
+              desc: "Controlled surface preparation to remove contaminants and create a suitable surface for coating.",
+              img: robotImg,
+              alt: "Shot blasting machine used for steel surface preparation"
+            },
+            {
+              num: "04",
+              title: "Airless Painting System",
+              desc: "Uniform protective coating application for consistent finish and long-term steel protection.",
+              img: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?q=80&w=800&auto=format&fit=crop",
+              alt: "Airless painting system used for protective coating"
+            },
+            {
+              num: "05",
+              title: "Quality Inspection Equipment",
+              desc: "Inspection and measurement equipment used to verify fabrication quality and dimensional accuracy.",
+              img: "https://images.unsplash.com/photo-1581092335397-9583fe92d232?q=80&w=800&auto=format&fit=crop",
+              alt: "Quality inspection equipment used for fabrication inspection"
+            },
+            {
+              num: "06",
+              title: "Material Handling Systems",
+              desc: "Efficient movement and handling of structural steel components throughout the manufacturing process.",
+              img: "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?q=80&w=800&auto=format&fit=crop",
+              alt: "Material handling systems used in steel manufacturing"
+            }
+          ].map((tool) => (
+            <div 
+              key={tool.num} 
+              className="group flex flex-col h-full overflow-hidden rounded-xl border border-slate-200/80 bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:shadow-md"
+            >
+              {/* Image with 3:2 aspect ratio */}
+              <div className="relative aspect-[3/2] w-full overflow-hidden bg-slate-950">
+                <img
+                  src={tool.img}
+                  alt={tool.alt}
+                  className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                  loading="lazy"
+                />
+                {/* Subtle dark gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent opacity-80" />
+                
+                {/* Number Badge */}
+                <span className="absolute top-4 left-4 inline-flex items-center rounded-md bg-slate-950/80 backdrop-blur-md border border-white/10 px-2.5 py-1 text-xs font-bold font-display text-accent shadow-sm">
+                  {tool.num}
+                </span>
               </div>
-              <div className="p-5">
-                <div className="font-display font-bold">{m.t}</div>
-                <div className="mt-1 text-sm text-muted-foreground">{m.d}</div>
+
+              {/* Card Body */}
+              <div className="flex flex-col flex-1 p-6">
+                <h3 className="font-display text-xl font-bold text-slate-900 mb-2 transition-colors group-hover:text-accent">
+                  {tool.title}
+                </h3>
+                <p className="text-sm text-slate-600 leading-relaxed flex-1">
+                  {tool.desc}
+                </p>
               </div>
             </div>
           ))}
         </div>
       </section>
+
+      {/* Quality at Every Step Section */}
+      <QualityProcess />
 
       <section className="relative overflow-hidden bg-[var(--steel-dark)] py-24 text-primary-foreground">
         <div className="container-x mx-auto max-w-[1400px]">

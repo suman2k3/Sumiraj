@@ -1,12 +1,13 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { Layout } from "@/components/site/Layout";
-import { blogPosts, BlogPost } from "@/lib/blogsData";
+import { BlogPost } from "@/lib/blogsData";
+import { useBlogPosts, getBlogPostBySlug } from "@/lib/blogsStore";
 import { Calendar, Clock, User, ArrowLeft, ArrowRight, Phone, Mail, FileText, Share2 } from "lucide-react";
 
 export const Route = createFileRoute("/blog/$slug")({
   head: ({ params }) => {
-    const post = blogPosts.find((p) => p.slug === params.slug);
+    const post = getBlogPostBySlug(params.slug);
     if (!post) {
       return {
         meta: [{ title: "Blog Post Not Found | Sumiraj" }],
@@ -28,191 +29,344 @@ export const Route = createFileRoute("/blog/$slug")({
 });
 
 // Custom simple parser to render Markdown syntax into beautiful React elements natively
-function MarkdownRenderer({ content }: { content: string }) {
-  const blocks = useMemo(() => {
-    // Normalize line endings and split by double newlines to find paragraphs/blocks
-    return content.replace(/\r\n/g, '\n').split('\n\n').filter(b => b.trim() !== '');
-  }, [content]);
+export function getFontStyleClass(fontStyle?: string): string {
+  if (!fontStyle) return "font-sans";
+  if (fontStyle.includes("Serif")) return "font-serif";
+  if (fontStyle.includes("Poppins") || fontStyle.includes("Clean")) return "font-display";
+  if (fontStyle.includes("Space")) return "font-mono font-semibold";
+  if (fontStyle.includes("Monospace") || fontStyle.includes("Code")) return "font-mono";
+  return "font-sans";
+}
 
-  const renderTextWithLinks = (text: string) => {
-    const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
-    let parts: React.ReactNode[] = [];
-    let lastIndex = 0;
-    let match;
+// Custom simple parser to render Markdown syntax into beautiful React elements natively
+export function MarkdownRenderer({ content, fontClass = "" }: { content: string; fontClass?: string }) {
+  const elements = useMemo(() => {
+    if (!content) return [];
 
-    while ((match = linkRegex.exec(text)) !== null) {
-      const plainText = text.substring(lastIndex, match.index);
-      if (plainText) {
-        parts.push(renderBoldText(plainText));
-      }
-      const linkText = match[1];
-      const linkUrl = match[2];
-      
+    const rawText = content.replace(/\r\n/g, '\n');
+    const blocks = rawText.split('\n\n').filter(b => b.trim() !== '');
+
+    const renderLink = (linkText: string, linkUrl: string, key: string | number) => {
       const isInternal = linkUrl.startsWith('/') || linkUrl.includes('sumiraj.com');
       const path = linkUrl.replace(/https?:\/\/(www\.)?sumiraj\.com/, '');
       
       if (isInternal && (path.startsWith('/') || path === '')) {
-        parts.push(
-          <Link key={match.index} to={path || '/'} className="text-accent font-semibold hover:underline">
-            {linkText}
+        return (
+          <Link key={key} to={path || '/'} className="text-accent font-semibold hover:underline">
+            {renderInlineFormatting(linkText)}
           </Link>
         );
-      } else {
-        parts.push(
-          <a key={match.index} href={linkUrl} target="_blank" rel="noopener noreferrer" className="text-accent font-semibold hover:underline">
-            {linkText}
-          </a>
-        );
       }
-      lastIndex = linkRegex.lastIndex;
-    }
+      return (
+        <a key={key} href={linkUrl} target="_blank" rel="noopener noreferrer" className="text-accent font-semibold hover:underline">
+          {renderInlineFormatting(linkUrl ? linkText : '')}
+        </a>
+      );
+    };
 
-    const remainingText = text.substring(lastIndex);
-    if (remainingText) {
-      parts.push(renderBoldText(remainingText));
-    }
+    const renderInlineFormatting = (text: string): React.ReactNode[] => {
+      if (!text) return [];
 
-    return parts.length > 0 ? parts : text;
-  };
+      const tokenRegex = /(?:\[([^\]]+)\]\(([^)]+)\)|<a\s+href=["']([^"']+)["'][^>]*>(.*?)<\/a>|\*\*([^*]+)\*\*|==([^=]+)==|<mark[^>]*>(.*?)<\/mark>|<strong[^>]*>(.*?)<\/strong>|<b[^>]*>(.*?)<\/b>|<em[^>]*>(.*?)<\/em>|<i[^>]*>(.*?)<\/i>|<u[^>]*>(.*?)<\/u>|<code[^>]*>(.*?)<\/code>|<span[^>]*>(.*?)<\/span>|<br\s*\/?>)/gi;
 
-  const renderBoldText = (text: string) => {
-    const boldRegex = /\*\*([^*]+)\*\*/g;
-    let parts: React.ReactNode[] = [];
-    let lastIndex = 0;
-    let match;
+      let parts: React.ReactNode[] = [];
+      let lastIndex = 0;
+      let match;
 
-    while ((match = boldRegex.exec(text)) !== null) {
-      const plainText = text.substring(lastIndex, match.index);
-      if (plainText) {
-        parts.push(plainText);
+      while ((match = tokenRegex.exec(text)) !== null) {
+        if (match.index > lastIndex) {
+          parts.push(text.substring(lastIndex, match.index));
+        }
+
+        const fullMatch = match[0];
+        const key = `inline-${match.index}-${lastIndex}`;
+
+        if (match[1] !== undefined && match[2] !== undefined) {
+          parts.push(renderLink(match[1], match[2], key));
+        } else if (match[3] !== undefined && match[4] !== undefined) {
+          parts.push(renderLink(match[4], match[3], key));
+        } else if (match[5] !== undefined) {
+          parts.push(<strong key={key} className="font-bold text-slate-900">{renderInlineFormatting(match[5])}</strong>);
+        } else if (match[6] !== undefined) {
+          parts.push(
+            <mark key={key} className="bg-amber-200/90 text-slate-900 px-1.5 py-0.5 rounded font-semibold shadow-sm">
+              {renderInlineFormatting(match[6])}
+            </mark>
+          );
+        } else if (match[7] !== undefined) {
+          parts.push(
+            <mark key={key} className="bg-amber-200/90 text-slate-900 px-1.5 py-0.5 rounded font-semibold shadow-sm">
+              {renderInlineFormatting(match[7])}
+            </mark>
+          );
+        } else if (match[8] !== undefined) {
+          parts.push(<strong key={key} className="font-bold text-slate-900">{renderInlineFormatting(match[8])}</strong>);
+        } else if (match[9] !== undefined) {
+          parts.push(<strong key={key} className="font-bold text-slate-900">{renderInlineFormatting(match[9])}</strong>);
+        } else if (match[10] !== undefined) {
+          parts.push(<em key={key} className="italic">{renderInlineFormatting(match[10])}</em>);
+        } else if (match[11] !== undefined) {
+          parts.push(<em key={key} className="italic">{renderInlineFormatting(match[11])}</em>);
+        } else if (match[12] !== undefined) {
+          parts.push(<u key={key} className="underline">{renderInlineFormatting(match[12])}</u>);
+        } else if (match[13] !== undefined) {
+          parts.push(
+            <code key={key} className="bg-slate-100 text-pink-600 px-1.5 py-0.5 rounded text-sm font-mono">
+              {match[13]}
+            </code>
+          );
+        } else if (match[14] !== undefined) {
+          parts.push(<span key={key}>{renderInlineFormatting(match[14])}</span>);
+        } else if (fullMatch.toLowerCase().startsWith('<br')) {
+          parts.push(<br key={key} />);
+        }
+
+        lastIndex = tokenRegex.lastIndex;
       }
-      parts.push(<strong key={match.index} className="font-bold text-slate-900">{match[1]}</strong>);
-      lastIndex = boldRegex.lastIndex;
-    }
 
-    const remainingText = text.substring(lastIndex);
-    if (remainingText) {
-      parts.push(remainingText);
-    }
+      if (lastIndex < text.length) {
+        parts.push(text.substring(lastIndex));
+      }
 
-    return parts.length > 0 ? parts : text;
-  };
+      return parts.length > 0 ? parts : [text];
+    };
 
-  const renderBlock = (block: string, index: number) => {
-    const trimmed = block.trim();
+    const renderSingleLine = (line: string, indexKey: string) => {
+      const trimmed = line.trim();
+      if (!trimmed) return null;
 
-    // Headers
-    if (trimmed.startsWith('# ')) {
-      return (
-        <h1 key={index} className="font-display text-3xl font-extrabold mt-10 mb-5 text-slate-950 border-b border-slate-100 pb-3 leading-tight">
-          {renderTextWithLinks(trimmed.substring(2))}
-        </h1>
-      );
-    }
-    if (trimmed.startsWith('## ')) {
-      return (
-        <h2 key={index} className="font-display text-2xl font-extrabold mt-8 mb-4 text-slate-900 border-b border-slate-100 pb-2 leading-tight">
-          {renderTextWithLinks(trimmed.substring(3))}
-        </h2>
-      );
-    }
-    if (trimmed.startsWith('### ')) {
-      return (
-        <h3 key={index} className="font-display text-xl font-bold mt-6 mb-3 text-slate-850 leading-snug">
-          {renderTextWithLinks(trimmed.substring(4))}
-        </h3>
-      );
-    }
-
-    // Horizontal Rule
-    if (trimmed === '---') {
-      return <hr key={index} className="my-8 border-slate-200" />;
-    }
-
-    // Bullet Lists
-    if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
-      const lines = trimmed.split('\n');
-      const items = lines.map(line => line.replace(/^[-*]\s+/, '').trim()).filter(line => line !== '');
-      return (
-        <ul key={index} className="my-6 pl-6 list-disc space-y-2.5 text-slate-600 leading-relaxed text-base md:text-lg">
-          {items.map((item, idx) => (
-            <li key={idx} className="marker:text-accent">
-              {renderTextWithLinks(item)}
-            </li>
-          ))}
-        </ul>
-      );
-    }
-
-    // Table Parsing
-    if (trimmed.includes('|') && trimmed.split('\n')[1]?.includes('---')) {
-      const rows = trimmed.split('\n').filter(r => r.trim() !== '');
-      if (rows.length >= 2) {
-        const headerRow = rows[0];
-        const isSeparator = rows[1].includes('|') && rows[1].includes('---');
-        const dataRows = isSeparator ? rows.slice(2) : rows.slice(1);
-        
-        const parseRow = (row: string) => 
-          row.split('|')
-             .map(c => c.trim())
-             .filter((c, idx, arr) => idx > 0 && idx < arr.length - 1);
-             
-        const headers = parseRow(headerRow);
-        
+      const h1Match = /^<h1[^>]*>(.*?)<\/h1>/i.exec(trimmed);
+      if (h1Match) {
         return (
-          <div key={index} className="my-8 overflow-x-auto rounded-lg border border-slate-200 shadow-sm">
-            <table className="w-full text-left text-sm text-slate-650 border-collapse">
-              <thead className="bg-slate-100/90 font-display text-xs uppercase tracking-wider text-slate-700 border-b border-slate-200">
-                <tr>
-                  {headers.map((h, i) => (
-                    <th key={i} className="px-6 py-4 font-bold">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {dataRows.map((row, i) => {
-                  const cells = parseRow(row);
-                  return (
-                    <tr key={i} className={i % 2 === 0 ? "bg-white hover:bg-slate-50/50" : "bg-slate-50/30 hover:bg-slate-50/50"}>
-                      {cells.map((c, j) => (
-                        <td key={j} className="px-6 py-4 font-medium">{c}</td>
-                      ))}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+          <h1 key={indexKey} className="font-display text-3xl md:text-4xl font-extrabold mt-10 mb-5 text-slate-950 border-b border-slate-200 pb-3 leading-tight">
+            {renderInlineFormatting(h1Match[1])}
+          </h1>
         );
       }
-    }
 
-    // Blockquote
-    if (trimmed.startsWith('> ')) {
-      const quoteText = trimmed.replace(/^>\s+/, '').trim();
+      const h2Match = /^<h2[^>]*>(.*?)<\/h2>/i.exec(trimmed);
+      if (h2Match) {
+        return (
+          <h2 key={indexKey} className="font-display text-2xl md:text-3xl font-extrabold mt-8 mb-4 text-slate-900 border-b border-slate-100 pb-2 leading-tight">
+            {renderInlineFormatting(h2Match[1])}
+          </h2>
+        );
+      }
+
+      const h3Match = /^<h3[^>]*>(.*?)<\/h3>/i.exec(trimmed);
+      if (h3Match) {
+        return (
+          <h3 key={indexKey} className="font-display text-xl md:text-2xl font-bold mt-7 mb-3 text-slate-850 leading-snug">
+            {renderInlineFormatting(h3Match[1])}
+          </h3>
+        );
+      }
+
+      const h4Match = /^<h4[^>]*>(.*?)<\/h4>/i.exec(trimmed);
+      if (h4Match) {
+        return (
+          <h4 key={indexKey} className="font-display text-lg md:text-xl font-bold mt-6 mb-3 text-slate-800 leading-snug">
+            {renderInlineFormatting(h4Match[1])}
+          </h4>
+        );
+      }
+
+      const h5Match = /^<h5[^>]*>(.*?)<\/h5>/i.exec(trimmed);
+      if (h5Match) {
+        return (
+          <h5 key={indexKey} className="font-display text-base md:text-lg font-bold mt-5 mb-2.5 text-slate-800">
+            {renderInlineFormatting(h5Match[1])}
+          </h5>
+        );
+      }
+
+      const h6Match = /^<h6[^>]*>(.*?)<\/h6>/i.exec(trimmed);
+      if (h6Match) {
+        return (
+          <h6 key={indexKey} className="font-display text-sm md:text-base font-bold mt-5 mb-2 text-slate-750">
+            {renderInlineFormatting(h6Match[1])}
+          </h6>
+        );
+      }
+
+      const pMatch = /^<p[^>]*>(.*?)<\/p>/i.exec(trimmed);
+      if (pMatch) {
+        return (
+          <p key={indexKey} className="my-3 text-slate-650 leading-relaxed text-base md:text-lg">
+            {renderInlineFormatting(pMatch[1])}
+          </p>
+        );
+      }
+
+      const blockquoteMatch = /^<blockquote[^>]*>(.*?)<\/blockquote>/i.exec(trimmed);
+      if (blockquoteMatch) {
+        return (
+          <blockquote key={indexKey} className="my-6 border-l-4 border-accent bg-slate-50 px-6 py-4 italic text-slate-700 rounded-r-md">
+            {renderInlineFormatting(blockquoteMatch[1])}
+          </blockquote>
+        );
+      }
+
+      if (trimmed.startsWith('######## ')) {
+        return (
+          <h6 key={indexKey} className="font-display text-[11px] font-extrabold uppercase tracking-widest mt-4 mb-2 text-slate-500">
+            {renderInlineFormatting(trimmed.substring(9))}
+          </h6>
+        );
+      }
+      if (trimmed.startsWith('####### ')) {
+        return (
+          <h6 key={indexKey} className="font-display text-xs md:text-sm font-bold uppercase tracking-wider mt-4 mb-2 text-slate-700">
+            {renderInlineFormatting(trimmed.substring(8))}
+          </h6>
+        );
+      }
+      if (trimmed.startsWith('###### ')) {
+        return (
+          <h6 key={indexKey} className="font-display text-sm md:text-base font-bold mt-5 mb-2 text-slate-750">
+            {renderInlineFormatting(trimmed.substring(7))}
+          </h6>
+        );
+      }
+      if (trimmed.startsWith('##### ')) {
+        return (
+          <h5 key={indexKey} className="font-display text-base md:text-lg font-bold mt-5 mb-2.5 text-slate-800">
+            {renderInlineFormatting(trimmed.substring(6))}
+          </h5>
+        );
+      }
+      if (trimmed.startsWith('#### ')) {
+        return (
+          <h4 key={indexKey} className="font-display text-lg md:text-xl font-bold mt-6 mb-3 text-slate-800 leading-snug">
+            {renderInlineFormatting(trimmed.substring(5))}
+          </h4>
+        );
+      }
+      if (trimmed.startsWith('### ')) {
+        return (
+          <h3 key={indexKey} className="font-display text-xl md:text-2xl font-bold mt-7 mb-3 text-slate-850 leading-snug">
+            {renderInlineFormatting(trimmed.substring(4))}
+          </h3>
+        );
+      }
+      if (trimmed.startsWith('## ')) {
+        return (
+          <h2 key={indexKey} className="font-display text-2xl md:text-3xl font-extrabold mt-8 mb-4 text-slate-900 border-b border-slate-100 pb-2 leading-tight">
+            {renderInlineFormatting(trimmed.substring(3))}
+          </h2>
+        );
+      }
+      if (trimmed.startsWith('# ')) {
+        return (
+          <h1 key={indexKey} className="font-display text-3xl md:text-4xl font-extrabold mt-10 mb-5 text-slate-950 border-b border-slate-200 pb-3 leading-tight">
+            {renderInlineFormatting(trimmed.substring(2))}
+          </h1>
+        );
+      }
+
+      if (trimmed === '---' || trimmed === '<hr>' || trimmed === '<hr/>') {
+        return <hr key={indexKey} className="my-8 border-slate-200" />;
+      }
+
+      if (trimmed.startsWith('> ')) {
+        return (
+          <blockquote key={indexKey} className="my-6 border-l-4 border-accent bg-slate-50 px-6 py-4 italic text-slate-700 rounded-r-md">
+            {renderInlineFormatting(trimmed.replace(/^>\s+/, ''))}
+          </blockquote>
+        );
+      }
+
       return (
-        <blockquote key={index} className="my-8 border-l-4 border-accent bg-slate-50 px-6 py-4 italic text-slate-700 rounded-r-md">
-          {renderTextWithLinks(quoteText)}
-        </blockquote>
+        <p key={indexKey} className="my-3 text-slate-650 leading-relaxed text-base md:text-lg">
+          {renderInlineFormatting(line)}
+        </p>
       );
-    }
+    };
 
-    // Default Paragraph
-    return (
-      <p key={index} className="my-4 text-slate-650 leading-relaxed text-base md:text-lg">
-        {renderTextWithLinks(trimmed)}
-      </p>
-    );
-  };
+    const renderedNodes: React.ReactNode[] = [];
 
-  return <div className="prose max-w-none">{blocks.map((block, idx) => renderBlock(block, idx))}</div>;
+    blocks.forEach((block, bIdx) => {
+      const trimmedBlock = block.trim();
+
+      if (trimmedBlock.includes('|') && trimmedBlock.split('\n')[1]?.includes('---')) {
+        const rows = trimmedBlock.split('\n').filter(r => r.trim() !== '');
+        if (rows.length >= 2) {
+          const headerRow = rows[0];
+          const isSeparator = rows[1].includes('|') && rows[1].includes('---');
+          const dataRows = isSeparator ? rows.slice(2) : rows.slice(1);
+          
+          const parseRow = (row: string) => 
+            row.split('|')
+               .map(c => c.trim())
+               .filter((c, idx, arr) => idx > 0 && idx < arr.length - 1);
+               
+          const headers = parseRow(headerRow);
+          
+          renderedNodes.push(
+            <div key={`table-${bIdx}`} className="my-8 overflow-x-auto rounded-lg border border-slate-200 shadow-sm">
+              <table className="w-full text-left text-sm text-slate-650 border-collapse">
+                <thead className="bg-slate-100/90 font-display text-xs uppercase tracking-wider text-slate-700 border-b border-slate-200">
+                  <tr>
+                    {headers.map((h, i) => (
+                      <th key={i} className="px-6 py-4 font-bold">{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {dataRows.map((row, i) => {
+                    const cells = parseRow(row);
+                    return (
+                      <tr key={i} className={i % 2 === 0 ? "bg-white hover:bg-slate-50/50" : "bg-slate-50/30 hover:bg-slate-50/50"}>
+                        {cells.map((c, j) => (
+                          <td key={j} className="px-6 py-4 font-medium">{c}</td>
+                        ))}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          );
+          return;
+        }
+      }
+
+      const lines = block.split('\n').filter(l => l.trim() !== '');
+      const isFullList = lines.every(l => l.trim().startsWith('- ') || l.trim().startsWith('* ') || /^<li[^>]*>/i.test(l.trim()));
+      if (isFullList && lines.length > 0) {
+        renderedNodes.push(
+          <ul key={`ul-${bIdx}`} className="my-6 pl-6 list-disc space-y-2.5 text-slate-600 leading-relaxed text-base md:text-lg">
+            {lines.map((line, idx) => {
+              const cleaned = line.trim().replace(/^[-*]\s+/, '').replace(/^<li[^>]*>(.*?)<\/li>/i, '$1');
+              return (
+                <li key={idx} className="marker:text-accent">
+                  {renderInlineFormatting(cleaned)}
+                </li>
+              );
+            })}
+          </ul>
+        );
+        return;
+      }
+
+      lines.forEach((line, lIdx) => {
+        const node = renderSingleLine(line, `block-${bIdx}-line-${lIdx}`);
+        if (node) renderedNodes.push(node);
+      });
+    });
+
+    return renderedNodes;
+  }, [content]);
+
+  return <div className={`prose max-w-none ${fontClass} whitespace-pre-wrap`}>{elements}</div>;
 }
 
 function SingleBlogPost() {
   const { slug } = useParams({ from: "/blog/$slug" });
+  const blogPosts = useBlogPosts();
 
   // Locate the requested post
-  const postIndex = useMemo(() => blogPosts.findIndex((p) => p.slug === slug), [slug]);
+  const postIndex = useMemo(() => blogPosts.findIndex((p) => p.slug === slug), [blogPosts, slug]);
   const post = useMemo(() => (postIndex !== -1 ? blogPosts[postIndex] : null), [postIndex]);
 
   // Determine prev and next articles
@@ -265,6 +419,8 @@ function SingleBlogPost() {
     "description": post.content.replace(/[#*`\-]/g, "").substring(0, 155)
   };
 
+  const fontClass = getFontStyleClass(post.fontStyle);
+
   return (
     <Layout>
       {/* Inject JSON-LD */}
@@ -287,7 +443,7 @@ function SingleBlogPost() {
       </div>
 
       {/* Main content grid */}
-      <article className="py-16 md:py-24 bg-white">
+      <article className={`py-16 md:py-24 bg-white ${fontClass}`}>
         <div className="container-x mx-auto max-w-[1400px]">
           
           {/* Article Header block */}
@@ -295,7 +451,7 @@ function SingleBlogPost() {
             <span className="rounded bg-accent/15 px-3 py-1 text-xs font-bold uppercase tracking-widest text-accent">
               {post.category}
             </span>
-            <h1 className="mt-5 font-display text-3xl font-extrabold leading-[1.1] text-slate-900 sm:text-4xl md:text-5xl lg:text-6xl">
+            <h1 className={`mt-5 font-extrabold leading-[1.1] text-slate-900 text-3xl sm:text-4xl md:text-5xl lg:text-6xl ${fontClass}`}>
               {post.title}
             </h1>
             <div className="mt-6 flex flex-wrap items-center gap-4 text-xs font-bold uppercase tracking-wider text-slate-400">
@@ -315,8 +471,8 @@ function SingleBlogPost() {
           <div className="grid gap-12 lg:grid-cols-[1fr_360px] lg:items-start">
             
             {/* Left Column: Markdown content */}
-            <div className="blog-article-content min-w-0">
-              <MarkdownRenderer content={post.content} />
+            <div className={`blog-article-content min-w-0 ${fontClass}`}>
+              <MarkdownRenderer content={post.content} fontClass={fontClass} />
 
               {/* Prev / Next Article Navigation row */}
               <div className="mt-16 pt-8 border-t border-slate-100 grid gap-4 sm:grid-cols-2">

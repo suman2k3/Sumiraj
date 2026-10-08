@@ -69,7 +69,7 @@ export function Navbar() {
                 isBuildingSystemActive ? "text-accent font-bold" : "text-slate-600 hover:text-slate-900"
               }`}
             >
-              Building Systems
+              Products
               <ChevronDown size={14} className={`transition-transform duration-200 ${dropdownOpen ? "rotate-180 text-accent" : "text-slate-400"}`} />
             </Link>
 
@@ -153,7 +153,7 @@ export function Navbar() {
                 className="flex w-full items-center justify-between py-3 text-sm font-medium text-slate-600 hover:text-slate-900 outline-none"
               >
                 <span className={isBuildingSystemActive ? "text-accent font-bold" : ""}>
-                  Building Systems
+                  Products
                 </span>
                 <ChevronDown size={16} className={`transition-transform duration-200 ${mobileAccordionOpen ? "rotate-180 text-accent" : "text-slate-400"}`} />
               </button>

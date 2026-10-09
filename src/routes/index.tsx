@@ -255,8 +255,8 @@ function Home() {
               Industrial Shed, Warehouse &amp; Steel Building Across India
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Link to="/manufacturing" className="inline-flex items-center gap-2 rounded bg-accent px-5 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-lg shadow-accent/20 hover:brightness-110 hover:shadow-xl hover:shadow-accent/30 transition-all duration-300">
-                Explore Building Systems <ArrowRight size={14} />
+              <Link to="/products" className="inline-flex items-center gap-2 rounded bg-accent px-5 py-2.5 text-xs sm:text-sm font-semibold text-white shadow-lg shadow-accent/20 hover:brightness-110 hover:shadow-xl hover:shadow-accent/30 transition-all duration-300">
+                Explore Products <ArrowRight size={14} />
               </Link>
               <Link to="/contact" className="inline-flex items-center gap-2 rounded border border-white/20 bg-white/10 px-5 py-2.5 text-xs sm:text-sm font-semibold text-white backdrop-blur-sm hover:bg-white/20 hover:border-white/30 transition-all duration-300">
                 Request a Free Quote
@@ -295,9 +295,9 @@ function Home() {
       </section>
 
       {/* Infinite Client Logo Slider Row */}
-      <section className="border-b border-slate-200 bg-white py-12 overflow-hidden">
+      <section className="border-b border-slate-200 bg-white py-8 sm:py-10 overflow-hidden">
         <div className="container-x mx-auto max-w-[1400px]">
-          <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 mb-8">
+          <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-slate-500 mb-6">
             Delivering to industry leaders worldwide
           </p>
         </div>
@@ -326,10 +326,10 @@ function Home() {
       </section>
 
       {/* Build With Confidence Section */}
-      <section className="bg-slate-900 border-b border-slate-800 py-16 md:py-20 text-white">
+      <section className="bg-slate-900 border-b border-slate-800 py-12 sm:py-16 text-white">
         <div className="container-x mx-auto max-w-[1400px]">
           {/* Header */}
-          <div className="mx-auto max-w-2xl text-center mb-12 md:mb-14">
+          <div className="mx-auto max-w-2xl text-center mb-10 md:mb-12">
             <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-extrabold uppercase tracking-tight text-white">
               BUILD WITH CONFIDENCE
             </h2>
@@ -382,8 +382,8 @@ function Home() {
       </section>
 
       {/* Who We Are Section */}
-      <section className="container-x mx-auto max-w-[1400px] py-24">
-        <div className="grid gap-14 lg:grid-cols-2 lg:items-center">
+      <section className="container-x mx-auto max-w-[1400px] py-12 sm:py-16 md:py-20">
+        <div className="grid gap-10 lg:gap-14 lg:grid-cols-2 lg:items-center">
           <div className="relative">
             <img src={teamImg} alt="Sumiraj PEB Engineers & Steel Building Construction Site" className="aspect-[3/2] w-full rounded-lg object-cover shadow-lg" loading="lazy" />
             <div className="absolute -bottom-6 -right-6 hidden rounded-lg bg-accent p-6 text-accent-foreground shadow-xl md:block border-2 border-white">
@@ -393,7 +393,7 @@ function Home() {
           </div>
           <div>
             <p className="eyebrow">Who We Are</p>
-            <h2 className="mt-3 font-display text-4xl font-bold md:text-5xl leading-tight text-slate-900">Engineering Excellence in Pre-Engineered Building Solutions</h2>
+            <h2 className="mt-3 font-display text-3xl sm:text-4xl md:text-5xl leading-tight text-slate-900">Engineering Excellence in Pre-Engineered Building Solutions</h2>
             <p className="mt-5 text-slate-600 leading-relaxed">
 Sumiraj is a trusted Pre-Engineered Building (PEB) manufacturer in India, delivering innovative steel building solutions for industrial, commercial, logistics, warehousing, and infrastructure projects. We provide complete engineering services—from structural design and precision manufacturing to on-site installation—ensuring every project meets the highest standards of quality, safety, and performance.            </p>
             <p className="mt-4 text-slate-600 leading-relaxed">
@@ -406,18 +406,18 @@ Driven by advanced engineering practices, modern manufacturing facilities, and a
       </section>
 
       {/* SEO Section 1: Detailed PEB Anatomy & Components */}
-      <section className="bg-slate-50 border-y border-slate-200/60 py-24">
+      <section className="bg-slate-50 border-y border-slate-200/60 py-12 sm:py-16 md:py-20">
         <div className="container-x mx-auto max-w-[1400px]">
           <div className="max-w-3xl mx-auto text-center">
             <span className="eyebrow">Technical Architecture</span>
-            <h2 className="mt-3 font-display text-4xl font-extrabold text-slate-900 sm:text-5xl">
+            <h2 className="mt-3 font-display text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900">
               Complete Pre-Engineered Building (PEB) System
             </h2>
-            <p className="mt-4 text-lg text-slate-600">
+            <p className="mt-4 text-base sm:text-lg text-slate-600">
 Every Sumiraj Pre-Engineered Building is designed as an integrated structural system where each component works together to deliver exceptional strength, durability, and construction efficiency. From precision-engineered framing to advanced roofing and finishing accessories, our building systems are optimized for industrial, commercial, and infrastructure applications.            </p>
           </div>
 
-          <div className="mt-16 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-10 md:mt-14 grid gap-6 sm:gap-8 md:grid-cols-2 lg:grid-cols-4">
             {[
               {
                 icon: Columns,
@@ -440,7 +440,7 @@ Every Sumiraj Pre-Engineered Building is designed as an integrated structural sy
                 desc: "Our buildings are equipped with precision-engineered accessories including skylights, ridge ventilators, turbo ventilators, gutters, downspouts, doors, windows, louvers, insulation systems, and custom trims to ensure maximum functionality and aesthetics."
               }
             ].map((component, idx) => (
-              <div key={idx} className="bg-white p-8 rounded-xl shadow-sm border border-slate-100 hover:shadow-md hover:border-slate-200 transition-all duration-300 flex flex-col h-full">
+              <div key={idx} className="bg-white p-6 sm:p-8 rounded-xl shadow-sm border border-slate-100 hover:shadow-md hover:border-slate-200 transition-all duration-300 flex flex-col h-full">
                 <div className="h-12 w-12 rounded-lg bg-accent/10 flex items-center justify-center text-accent mb-6">
                   <component.icon size={24} />
                 </div>
@@ -456,7 +456,7 @@ Every Sumiraj Pre-Engineered Building is designed as an integrated structural sy
       <PEBWorkflow />
 
       {/* SEO Section 3: PEB Advantages vs. Conventional Buildings */}
-      <section className="bg-slate-900 py-24 text-white">
+      <section className="bg-slate-900 py-12 sm:py-16 md:py-20 text-white">
         <div className="container-x mx-auto max-w-[1400px]">
           <div className="grid gap-14 lg:grid-cols-12 lg:items-center">
             <div className="lg:col-span-5">
@@ -529,12 +529,12 @@ Every Sumiraj Pre-Engineered Building is designed as an integrated structural sy
       <IndustriesWeServe />
 
       {/* Featured Range Section */}
-      <section className="bg-slate-50 py-24 border-b border-slate-200/60">
+      <section className="bg-slate-50 py-12 sm:py-16 md:py-20 border-b border-slate-200/60">
         <div className="container-x mx-auto max-w-[1400px]">
           <div className="flex flex-wrap items-end justify-between gap-6">
             <div>
               <p className="eyebrow">Our Focus Areas</p>
-              <h2 className="mt-3 font-display text-4xl font-bold md:text-5xl text-slate-900">Built for industrial excellence.</h2>
+              <h2 className="mt-3 font-display text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900">Built for industrial excellence.</h2>
             </div>
             <Link to="/manufacturing" className="text-sm font-semibold text-accent hover:text-accent-foreground transition duration-300">Learn about our manufacturing →</Link>
           </div>
@@ -559,15 +559,15 @@ Every Sumiraj Pre-Engineered Building is designed as an integrated structural sy
       </section>
 
       {/* Why Choose Us Section */}
-      <section className="container-x mx-auto max-w-[1400px] py-24">
+      <section className="container-x mx-auto max-w-[1400px] py-12 sm:py-16 md:py-20">
         <div className="grid gap-3 md:grid-cols-2 md:items-end">
           <div>
             <p className="eyebrow">Why Sumiraj</p>
-            <h2 className="mt-3 font-display text-4xl font-bold md:text-5xl text-slate-900">Why Leading Businesses Choose Sumiraj</h2>
+            <h2 className="mt-3 font-display text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900">Why Leading Businesses Choose Sumiraj</h2>
           </div>
           <p className="text-slate-600 md:text-right max-w-md ml-auto">From precision engineering and advanced manufacturing to timely project delivery, Sumiraj provides end-to-end Pre-Engineered Building (PEB) solutions backed by quality, innovation, and decades of industry expertise.</p>
         </div>
-        <div className="mt-14 grid gap-px overflow-hidden rounded-xl border bg-slate-200 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mt-10 sm:mt-14 grid gap-px overflow-hidden rounded-xl border bg-slate-200 sm:grid-cols-2 lg:grid-cols-3">
           {[
             {
               icon: HardHat,
@@ -600,7 +600,7 @@ Every Sumiraj Pre-Engineered Building is designed as an integrated structural sy
               desc: "Our designs and engineering processes follow applicable Indian Standards and relevant structural and construction requirements."
             }
           ].map((f) => (
-            <div key={f.title} className="group bg-white p-8 transition hover:bg-accent hover:text-white flex flex-col justify-start">
+            <div key={f.title} className="group bg-white p-6 sm:p-8 transition hover:bg-accent hover:text-white flex flex-col justify-start">
               <f.icon size={32} className="text-accent transition group-hover:text-white shrink-0" />
               <h3 className="mt-6 font-display text-lg font-bold text-slate-900 group-hover:text-white">{f.title}</h3>
               <p className="mt-2 text-sm text-slate-600 transition group-hover:text-white/90 leading-relaxed">{f.desc}</p>
@@ -609,17 +609,14 @@ Every Sumiraj Pre-Engineered Building is designed as an integrated structural sy
         </div>
       </section>
 
-      {/* Industries Served */}
-      
-
       {/* Call to Action */}
-      <section className="relative overflow-hidden bg-accent py-20 text-white">
+      <section className="relative overflow-hidden bg-accent py-12 sm:py-16 text-white">
         <div className="container-x mx-auto flex max-w-[1400px] flex-col items-center justify-between gap-8 md:flex-row relative z-10">
           <div>
-            <h2 className="font-display text-3xl font-bold md:text-4xl">Have a structural drawing or specifications?</h2>
+            <h2 className="font-display text-2xl sm:text-3xl font-bold md:text-4xl">Have a structural drawing or specifications?</h2>
             <p className="mt-2 max-w-xl text-white/85">Submit your drawings or architectural concept — we will return a structural review, load assessment, and preliminary quote within 48 hours.</p>
           </div>
-          <Link to="/contact" className="inline-flex items-center gap-2 rounded bg-slate-900 px-8 py-4 text-sm font-semibold text-white hover:bg-black transition-all duration-300 shadow-lg">
+          <Link to="/contact" className="inline-flex items-center gap-2 rounded bg-slate-900 px-7 py-3.5 text-sm font-semibold text-white hover:bg-black transition-all duration-300 shadow-lg shrink-0">
             Start an inquiry <ArrowRight size={16} />
           </Link>
         </div>

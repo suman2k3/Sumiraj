@@ -17,6 +17,10 @@ export const Route = createFileRoute("/about")({
       { name: "description", content: "Three decades of precision engineering, driven by 600+ specialists across two integrated facilities." },
       { property: "og:title", content: "About Sumiraj PEB & Steel Structures" },
       { property: "og:description", content: "Our story, vision, leadership and the team behind the forge." },
+      { property: "og:url", content: "https://www.sumiraj.com/about" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://www.sumiraj.com/about" },
     ],
   }),
   component: About,
@@ -93,7 +97,7 @@ function About() {
         subtitle="Delivering innovative Pre-Engineered Building (PEB) solutions with decades of engineering excellence, precision manufacturing, and turnkey project execution."
       />
 
-      <section className="container-x mx-auto max-w-[1400px] py-24">
+      <section className="container-x mx-auto max-w-[1400px] py-12 sm:py-16 md:py-20">
         <div className="grid gap-16 lg:grid-cols-[1.2fr_1fr] lg:items-start">
           <div>
             <p className="eyebrow">Company Introduction</p>
@@ -109,7 +113,7 @@ function About() {
       </section>
 
       {/* What We Do Section */}
-      <section className="bg-slate-50 border-y border-slate-200/70 py-20 md:py-24">
+      <section className="bg-slate-50 border-y border-slate-200/70 py-12 sm:py-16 md:py-20">
         <div className="container-x mx-auto max-w-[1400px]">
           {/* Section Heading */}
           <div className="mx-auto max-w-3xl text-center mb-14 md:mb-16">
@@ -158,7 +162,7 @@ function About() {
       </section>
 
       {/* Build With Confidence Section */}
-      <section className="bg-slate-900 border-b border-slate-800 py-16 md:py-20 text-white">
+      <section className="bg-slate-900 border-b border-slate-800 py-12 sm:py-16 md:py-20 text-white">
         <div className="container-x mx-auto max-w-[1400px]">
           {/* Header */}
           <div className="mx-auto max-w-2xl text-center mb-12 md:mb-14">
@@ -214,7 +218,7 @@ function About() {
       </section>
 
       {/* Redesigned Purpose, Vision & Mission Vertical Storytelling Section */}
-      <section className="relative overflow-hidden bg-slate-950 py-20 md:py-28 text-white border-b border-slate-900">
+      <section className="relative overflow-hidden bg-slate-950 py-12 sm:py-16 md:py-20 text-white border-b border-slate-900">
         {/* Subtle Architectural Grid Pattern Overlay */}
         <div 
           className="absolute inset-0 opacity-[0.03] pointer-events-none" 
@@ -300,7 +304,7 @@ function About() {
         </div>
       </section>
 
-      <section className="container-x mx-auto max-w-[1400px] py-24">
+      <section className="container-x mx-auto max-w-[1400px] py-12 sm:py-16 md:py-20">
         <div className="mx-auto max-w-3xl text-center">
           <p className="eyebrow justify-center">Our History</p>
           <h2 className="mt-3 font-display text-4xl font-bold md:text-5xl">Engineering Excellence. Built to Last.</h2>
@@ -325,7 +329,7 @@ function About() {
         </div>
       </section>
 
-      <section className="bg-secondary py-24">
+      <section className="bg-secondary py-12 sm:py-16 md:py-20">
         <div className="container-x mx-auto max-w-[1400px]">
           <div className="max-w-2xl">
             <p className="eyebrow">Leadership</p>
@@ -346,7 +350,7 @@ function About() {
         </div>
       </section>
 
-      <section className="container-x mx-auto max-w-[1400px] py-24">
+      <section className="container-x mx-auto max-w-[1400px] py-12 sm:py-16 md:py-20">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
           <img src={teamImg} alt="Sumiraj team" className="aspect-[3/2] rounded-sm object-cover" loading="lazy" />
           <div>
@@ -366,7 +370,7 @@ function About() {
       </section>
 
       {/* Why Choose Us Section */}
-      <section className="container-x mx-auto max-w-[1400px] py-24">
+      <section className="container-x mx-auto max-w-[1400px] py-12 sm:py-16 md:py-20">
         <div className="grid gap-3 md:grid-cols-2 md:items-end">
           <div>
             <p className="eyebrow">Why Sumiraj</p>

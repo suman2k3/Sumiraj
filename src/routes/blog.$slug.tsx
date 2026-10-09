@@ -21,7 +21,11 @@ export const Route = createFileRoute("/blog/$slug")({
         { property: "og:description", content: `${post.content.replace(/[#*`\-]/g, "").substring(0, 155)}...` },
         { property: "og:image", content: post.image },
         { property: "og:type", content: "article" },
+        { property: "og:url", content: `https://www.sumiraj.com/blog/${post.slug}` },
         { name: "twitter:card", content: "summary_large_image" },
+      ],
+      links: [
+        { rel: "canonical", href: `https://www.sumiraj.com/blog/${post.slug}` },
       ],
     };
   },
@@ -578,7 +582,7 @@ function SingleBlogPost() {
 
       {/* Related Articles Section */}
       {relatedPosts.length > 0 && (
-        <section className="bg-slate-50 py-20 border-t border-slate-200/50">
+        <section className="bg-slate-50 py-12 sm:py-16 md:py-20 border-t border-slate-200/50">
           <div className="container-x mx-auto max-w-[1400px]">
             <span className="eyebrow">Related Guides</span>
             <h3 className="mt-3 font-display text-3xl font-extrabold text-slate-900 mb-10">Continue reading.</h3>
@@ -625,7 +629,7 @@ function SingleBlogPost() {
       )}
 
       {/* Turnkey Quote CTA */}
-      <section className="bg-accent py-16 text-white">
+      <section className="bg-accent py-12 sm:py-16 text-white">
         <div className="container-x mx-auto flex max-w-[1400px] flex-col items-center justify-between gap-8 md:flex-row">
           <div>
             <h2 className="font-display text-2xl font-bold md:text-3xl">Ready to construct your Pre-Engineered Building?</h2>

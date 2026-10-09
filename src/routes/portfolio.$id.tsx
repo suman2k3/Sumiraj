@@ -28,6 +28,10 @@ export const Route = createFileRoute("/portfolio/$id")({
         { property: "og:title", content: project.title },
         { property: "og:description", content: project.description },
         { property: "og:image", content: project.image },
+        { property: "og:url", content: `https://www.sumiraj.com/portfolio/${project.slug || project.id}` },
+      ],
+      links: [
+        { rel: "canonical", href: `https://www.sumiraj.com/portfolio/${project.slug || project.id}` },
       ],
     };
   },

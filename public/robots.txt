@@ -1,0 +1,7 @@
+# robots.txt for Sumiraj Industries Private Limited (https://www.sumiraj.com)
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /admin/
+
+Sitemap: https://www.sumiraj.com/sitemap.xml

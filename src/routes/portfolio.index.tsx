@@ -26,6 +26,10 @@ export const Route = createFileRoute("/portfolio/")({
       { name: "description", content: "Explore Sumiraj's portfolio of over 300+ prestigious pre-engineered steel buildings, warehouses, and industrial plants across India." },
       { property: "og:title", content: "Sumiraj PEB Projects Portfolio" },
       { property: "og:description", content: "300+ projects completed covering 20M+ square feet of premium industrial and commercial space." },
+      { property: "og:url", content: "https://www.sumiraj.com/portfolio" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://www.sumiraj.com/portfolio" },
     ],
   }),
   component: PortfolioListing,
@@ -330,7 +334,7 @@ function PortfolioListing() {
       </section>
 
       {/* Turnkey Call to Action */}
-      <section className="bg-slate-950 py-20 text-white border-t border-slate-800">
+      <section className="bg-slate-950 py-12 sm:py-16 md:py-20 text-white border-t border-slate-800">
         <div className="container-x mx-auto max-w-[1400px]">
           <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
             <div>

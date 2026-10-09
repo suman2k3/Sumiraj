@@ -80,7 +80,7 @@ const itemVariants: Variants = {
 
 export function PEBWorkflow() {
   return (
-    <section className="container-x mx-auto max-w-[1400px] py-24">
+    <section className="container-x mx-auto max-w-[1400px] py-12 sm:py-16 md:py-20">
       {/* Section Header */}
       <div className="mx-auto max-w-3xl text-center mb-16 md:mb-20">
         <span className="eyebrow justify-center">WORKFLOW &amp; EXECUTION</span>

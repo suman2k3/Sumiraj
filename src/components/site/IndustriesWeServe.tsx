@@ -114,7 +114,7 @@ function IndustryCard({ item, index }: { item: IndustryItem; index: number }) {
 
 export function IndustriesWeServe() {
   return (
-    <section className="container-x mx-auto max-w-[1400px] py-24">
+    <section className="container-x mx-auto max-w-[1400px] py-12 sm:py-16 md:py-20">
       {/* Section Header */}
       <div className="mx-auto max-w-3xl text-center mb-16">
         <p className="eyebrow justify-center">Sectors We Empower</p>

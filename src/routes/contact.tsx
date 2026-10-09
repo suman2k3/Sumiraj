@@ -13,6 +13,10 @@ export const Route = createFileRoute("/contact")({
       { name: "description", content: "Send us a specification, request a quote, or visit our facility. We respond within 48 hours." },
       { property: "og:title", content: "Contact Sumiraj" },
       { property: "og:description", content: "Contact form, address, phone, email and working hours." },
+      { property: "og:url", content: "https://www.sumiraj.com/contact" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://www.sumiraj.com/contact" },
     ],
   }),
   component: Contact,
@@ -190,7 +194,7 @@ function Contact() {
         height="sm"
       />
 
-      <section className="container-x mx-auto max-w-[1400px] py-24">
+      <section className="container-x mx-auto max-w-[1400px] py-12 sm:py-16 md:py-20">
         <div className="grid gap-14 lg:grid-cols-[1.3fr_1fr]">
           <div className="rounded-sm border bg-card p-8 md:p-12">
             <p className="eyebrow">Inquiry Form</p>
@@ -519,7 +523,7 @@ function Contact() {
         </div>
       </section>
 
-      <section className="bg-secondary py-24">
+      <section className="bg-secondary py-12 sm:py-16 md:py-20">
         <div className="container-x mx-auto max-w-[1400px]">
           <div className="max-w-2xl">
             <p className="eyebrow">Visit Us</p>

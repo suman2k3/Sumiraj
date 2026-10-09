@@ -60,7 +60,7 @@ const itemVariants = {
 
 export function QualityProcess() {
   return (
-    <section className="bg-slate-900 border-y border-slate-800 py-20 text-white overflow-hidden">
+    <section className="bg-slate-900 border-y border-slate-800 py-12 sm:py-16 md:py-20 text-white overflow-hidden">
       <div className="container-x mx-auto max-w-[1400px]">
         {/* Section Header */}
         <div className="mx-auto max-w-3xl text-center mb-16 md:mb-20">

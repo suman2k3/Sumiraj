@@ -13,6 +13,10 @@ export const Route = createFileRoute("/blog/")({
       { name: "description", content: "Expert technical articles, pricing guides, and solutions for Pre-Engineered Buildings (PEB), steel structures, and manufacturing plants." },
       { property: "og:title", content: "Sumiraj PEB Engineering Blog" },
       { property: "og:description", content: "Learn about steel requirements, PEB costs, and cold storage designs from our engineering team." },
+      { property: "og:url", content: "https://www.sumiraj.com/blog" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://www.sumiraj.com/blog" },
     ],
   }),
   component: BlogListing,
@@ -85,7 +89,7 @@ function BlogListing() {
         height="md"
       />
 
-      <section className="bg-slate-50 py-16">
+      <section className="bg-slate-50 py-12 sm:py-16 md:py-20">
         <div className="container-x mx-auto max-w-[1400px]">
           
           {/* Controls: Search bar & Category filter */}
@@ -250,7 +254,7 @@ function BlogListing() {
       </section>
 
       {/* Newsletter Signup CTA */}
-      <section className="bg-slate-900 py-20 text-white border-t border-slate-850">
+      <section className="bg-slate-900 py-12 sm:py-16 md:py-20 text-white border-t border-slate-850">
         <div className="container-x mx-auto max-w-[1400px]">
           <div className="mx-auto max-w-3xl text-center">
             <span className="eyebrow text-accent">Technical Newsletter</span>

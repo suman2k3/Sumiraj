@@ -10,14 +10,14 @@ const links = [
   { to: "/manufacturing", label: "Manufacturing" },
 ] as const;
 
-const buildingSystemsSublinks = [
-  { to: "/building-systems/pre-engineered-buildings", label: "Pre Engineered Buildings" },
-  { to: "/building-systems/primary-framing", label: "Primary Framing" },
-  { to: "/building-systems/secondary-framing-systems", label: "Secondary Framing Systems" },
-  { to: "/building-systems/roofing-and-wall-cladding-systems", label: "Roofing & Wall Cladding Systems" },
-  { to: "/building-systems/standing-seam-roofing-system", label: "Standing Seam Roofing System" },
-  { to: "/building-systems/mezzanine-floors", label: "Mezzanine Floors" },
-  { to: "/building-systems/erection-and-installation", label: "Erection & Installation" },
+const productsSublinks = [
+  { to: "/products/pre-engineered-buildings", label: "Pre Engineered Buildings" },
+  { to: "/products/primary-framing", label: "Primary Framing" },
+  { to: "/products/secondary-framing-systems", label: "Secondary Framing Systems" },
+  { to: "/products/roofing-and-wall-cladding-systems", label: "Roofing & Wall Cladding Systems" },
+  { to: "/products/standing-seam-roofing-system", label: "Standing Seam Roofing System" },
+  { to: "/products/mezzanine-floors", label: "Mezzanine Floors" },
+  { to: "/products/erection-and-installation", label: "Erection & Installation" },
 ] as const;
 
 const endLinks = [
@@ -32,7 +32,7 @@ export function Navbar() {
   const [mobileAccordionOpen, setMobileAccordionOpen] = useState(false);
   
   const location = useLocation();
-  const isBuildingSystemActive = location.pathname.startsWith("/building-systems");
+  const isProductActive = location.pathname.startsWith("/products");
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-150 bg-white/95 shadow-sm backdrop-blur">
@@ -56,17 +56,17 @@ export function Navbar() {
             </Link>
           ))}
 
-          {/* Building Systems Hover Dropdown */}
+          {/* Products Hover Dropdown */}
           <div 
             className="relative"
             onMouseEnter={() => setDropdownOpen(true)}
             onMouseLeave={() => setDropdownOpen(false)}
           >
             <Link
-              to="/building-systems"
+              to="/products"
               onClick={() => setDropdownOpen(false)}
               className={`flex items-center gap-1 rounded px-3 py-2 text-sm font-medium transition-colors outline-none ${
-                isBuildingSystemActive ? "text-accent font-bold" : "text-slate-600 hover:text-slate-900"
+                isProductActive ? "text-accent font-bold" : "text-slate-600 hover:text-slate-900"
               }`}
             >
               Products
@@ -82,7 +82,7 @@ export function Navbar() {
                   transition={{ duration: 0.15 }}
                   className="absolute left-0 top-full mt-1 w-72 rounded-lg border border-slate-150 bg-white p-2 shadow-xl ring-1 ring-black/5"
                 >
-                  {buildingSystemsSublinks.map((sublink) => (
+                  {productsSublinks.map((sublink) => (
                     <Link
                       key={sublink.to}
                       to={sublink.to}
@@ -146,13 +146,13 @@ export function Navbar() {
               </Link>
             ))}
 
-            {/* Mobile Accordion for Building Systems */}
+            {/* Mobile Accordion for Products */}
             <div className="border-b border-slate-50 py-1">
               <button
                 onClick={() => setMobileAccordionOpen(!mobileAccordionOpen)}
                 className="flex w-full items-center justify-between py-3 text-sm font-medium text-slate-600 hover:text-slate-900 outline-none"
               >
-                <span className={isBuildingSystemActive ? "text-accent font-bold" : ""}>
+                <span className={isProductActive ? "text-accent font-bold" : ""}>
                   Products
                 </span>
                 <ChevronDown size={16} className={`transition-transform duration-200 ${mobileAccordionOpen ? "rotate-180 text-accent" : "text-slate-400"}`} />
@@ -167,7 +167,7 @@ export function Navbar() {
                     transition={{ duration: 0.2 }}
                     className="overflow-hidden bg-slate-55/20 px-4 py-1 flex flex-col gap-1 border-l-2 border-accent/25 my-1"
                   >
-                    {buildingSystemsSublinks.map((sublink) => (
+                    {productsSublinks.map((sublink) => (
                       <Link
                         key={sublink.to}
                         to={sublink.to}

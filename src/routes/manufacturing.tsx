@@ -18,6 +18,10 @@ export const Route = createFileRoute("/manufacturing")({
       { name: "description", content: "Vertically integrated manufacturing: forging, CNC machining, robotic welding and finishing across two integrated plants." },
       { property: "og:title", content: "Sumiraj Manufacturing" },
       { property: "og:description", content: "How we build — process, machines, production lines and safety standards." },
+      { property: "og:url", content: "https://www.sumiraj.com/manufacturing" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://www.sumiraj.com/manufacturing" },
     ],
   }),
   component: Manufacturing,
@@ -169,7 +173,7 @@ function Manufacturing() {
         height="lg"
       />
 
-      <section className="container-x mx-auto max-w-[1400px] py-24">
+      <section className="container-x mx-auto max-w-[1400px] py-12 sm:py-16 md:py-20">
         <div className="mx-auto max-w-2xl text-center">
           <p className="eyebrow justify-center">Manufacturing Process</p>
           <h2 className="mt-3 font-display text-4xl font-bold md:text-5xl">Six stages. Zero shortcuts.</h2>
@@ -185,7 +189,7 @@ function Manufacturing() {
         </div>
       </section>
 
-      <section className="bg-secondary py-24">
+      <section className="bg-secondary py-12 sm:py-16 md:py-20">
         <div className="container-x mx-auto grid max-w-[1400px] gap-14 lg:grid-cols-2 lg:items-center">
           <div>
             <p className="eyebrow">Production Facility</p>
@@ -205,7 +209,7 @@ function Manufacturing() {
       </section>
 
       {/* The Tools Behind the Tolerance Section */}
-      <section className="container-x mx-auto max-w-[1400px] py-24 border-t border-slate-200/60">
+      <section className="container-x mx-auto max-w-[1400px] py-12 sm:py-16 md:py-20 border-t border-slate-200/60">
         {/* Section Header */}
         <div className="mx-auto max-w-3xl text-center mb-16">
           <p className="eyebrow justify-center">THE TOOLS BEHIND THE TOLERANCE</p>
@@ -302,7 +306,7 @@ function Manufacturing() {
       <QualityProcess />
 
       {/* Why Manufacturing Precision Matters Section */}
-      <section className="bg-slate-50 border-y border-slate-200/70 py-20 md:py-24">
+      <section className="bg-slate-50 border-y border-slate-200/70 py-12 sm:py-16 md:py-20">
         <div className="container-x mx-auto max-w-[1400px]">
           {/* Section Heading */}
           <div className="mx-auto max-w-3xl text-center mb-14 md:mb-16">
@@ -345,7 +349,7 @@ function Manufacturing() {
       </section>
 
       {/* Manufacturing Facility Gallery Section */}
-      <section className="bg-slate-900 border-b border-slate-800 py-20 md:py-24 text-white overflow-hidden">
+      <section className="bg-slate-900 border-b border-slate-800 py-12 sm:py-16 md:py-20 text-white overflow-hidden">
         <div className="container-x mx-auto max-w-[1400px]">
           {/* Section Header with Navigation Controls */}
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 md:mb-14">
@@ -422,7 +426,7 @@ function Manufacturing() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden bg-[var(--steel-dark)] py-24 text-primary-foreground">
+      <section className="relative overflow-hidden bg-[var(--steel-dark)] py-12 sm:py-16 md:py-20 text-primary-foreground">
         <div className="container-x mx-auto max-w-[1400px]">
           <div className="grid gap-14 lg:grid-cols-[1fr_1.5fr] lg:items-center">
             <div>

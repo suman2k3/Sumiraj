@@ -14,10 +14,10 @@ interface Props {
 export function PageHero({ image, eyebrow, title, subtitle, breadcrumb, height = "md" }: Props) {
   const h =
     height === "sm"
-      ? "h-[200px] sm:h-[280px] md:h-[360px]"
+      ? "min-h-[220px] sm:min-h-[280px] md:min-h-[360px] py-6 sm:py-8"
       : height === "lg"
-      ? "h-[280px] sm:h-[400px] md:h-[540px]"
-      : "h-[220px] sm:h-[320px] md:h-[420px] lg:h-[460px]";
+      ? "min-h-[300px] sm:min-h-[400px] md:min-h-[540px] py-8 sm:py-12"
+      : "min-h-[240px] sm:min-h-[320px] md:min-h-[420px] lg:min-h-[460px] py-8 sm:py-12";
 
   return (
     <section className={`relative w-full overflow-hidden ${h} transition-all duration-300`}>

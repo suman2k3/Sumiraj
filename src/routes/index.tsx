@@ -203,7 +203,7 @@ function Home() {
   return (
     <Layout>
       {/* Redesigned Hero Section (Full-length Viewport-locked Background Slideshow with Text Overlaid) */}
-      <section className="relative h-[calc(100vh-64px)] h-[calc(100dvh-64px)] w-full overflow-hidden bg-slate-950 flex items-center border-b border-slate-900">
+      <section className="relative min-h-[calc(100vh-64px)] min-h-[calc(100dvh-64px)] w-full overflow-hidden bg-slate-950 flex items-center border-b border-slate-900 py-12 md:py-0">
         {/* Background Slideshow */}
         <div className="absolute inset-0 z-0">
           {heroImages.map((img, idx) => (

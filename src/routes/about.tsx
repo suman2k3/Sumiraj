@@ -3,7 +3,12 @@ import { Layout } from "@/components/site/Layout";
 import { PageHero } from "@/components/site/PageHero";
 import heroImg from "@/assets/hero-about.jpg";
 import teamImg from "@/assets/img-team.jpg";
-import { Target, Eye, Award, Users, Factory, TrendingUp, HardHat, Layers, Ruler, Clock, ShieldCheck } from "lucide-react";
+import pebImg from "@/assets/hero-peb-system.jpg";
+import primaryFramingImg from "@/assets/hero-primary-framing.jpg";
+import warehouseImg from "@/assets/img-warehouse.jpg";
+import cncImg from "@/assets/img-cnc.jpg";
+import secondaryFramingImg from "@/assets/hero-secondary-framing.jpg";
+import { Target, Eye, Award, Users, Factory, TrendingUp, HardHat, Layers, Ruler, Clock, ShieldCheck, Building2, Boxes } from "lucide-react";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -17,6 +22,44 @@ export const Route = createFileRoute("/about")({
   component: About,
 });
 
+const whatWeDoOfferings = [
+  {
+    step: "01",
+    title: "Pre-Engineered Buildings",
+    desc: "Engineered steel building solutions designed for industrial, commercial, and infrastructure requirements.",
+    image: pebImg,
+    alt: "Pre-Engineered Buildings",
+  },
+  {
+    step: "02",
+    title: "Industrial Sheds",
+    desc: "Functional steel sheds designed to support industrial operations, production activities, and covered workspaces.",
+    image: primaryFramingImg,
+    alt: "Industrial Sheds",
+  },
+  {
+    step: "03",
+    title: "Warehouses",
+    desc: "Steel warehouse structures designed to support storage, logistics, and efficient material movement.",
+    image: warehouseImg,
+    alt: "Warehouses",
+  },
+  {
+    step: "04",
+    title: "Factory Buildings",
+    desc: "Purpose-designed industrial buildings planned around operational requirements, workflow, and production space.",
+    image: cncImg,
+    alt: "Factory Buildings",
+  },
+  {
+    step: "05",
+    title: "Custom Steel Structures",
+    desc: "Customized structural steel solutions developed to meet specific project designs and engineering requirements.",
+    image: secondaryFramingImg,
+    alt: "Custom Steel Structures",
+  },
+];
+
 const timeline = [
   { year: "2017", title: "The Foundation", text: "Sumiraj was established with a focus on pre-engineered buildings and industrial steel structures." },
   { year: "2019", title: "Expanding Capabilities", text: "Expanded fabrication capabilities to support larger and more demanding industrial projects." },
@@ -26,12 +69,17 @@ const timeline = [
   { year: "2026", title: "200+ Projects and Counting", text: "Reached 200+ completed projects, serving industrial clients across India." },
 ];
 
-const leaders = [
-  { name: "Mr Mihir Singh", role: "CEO", note: "35+ years in heavy engineering" },
-  { name: "Mr Pradeep Kumar", role: "GM", note: "Former Bosch India, IIT Bombay" },
-  { name: "Mr Devendra Kumar", role: "Sales & Marketing Manager", note: "Metallurgy PhD, ex-Siemens" },
-  { name: "Mr Alok Ranjan", role: "Project Manager", note: "TÜV-certified lead auditor" },
-  
+interface Leader {
+  name: string;
+  role: string;
+  note?: string;
+}
+
+const leaders: Leader[] = [
+  { name: "Mr Mihir Singh", role: "CEO" },
+  { name: "Mr Pradeep Kumar", role: "GM" },
+  { name: "Mr Devendra Kumar", role: "Sales & Marketing Manager" },
+  { name: "Mr Alok Ranjan", role: "Project Manager" },
 ];
 
 function About() {
@@ -55,6 +103,56 @@ function About() {
           </div>
           <div className="space-y-4 text-muted-foreground md:text-lg">
             <p>Sumiraj is a leading Pre-Engineered Building (PEB) manufacturer in India, delivering end-to-end steel building solutions for industrial, commercial, warehousing, and infrastructure projects.</p>
+            <p>Our commitment to innovation, quality, and customer satisfaction has earned the trust of businesses across diverse industries:when the specification is critical, the order comes to Sumiraj.</p>
+          </div>
+        </div>
+      </section>
+
+      {/* What We Do Section */}
+      <section className="bg-slate-50 border-y border-slate-200/70 py-20 md:py-24">
+        <div className="container-x mx-auto max-w-[1400px]">
+          {/* Section Heading */}
+          <div className="mx-auto max-w-3xl text-center mb-14 md:mb-16">
+            <p className="eyebrow justify-center">What We Do</p>
+            <h2 className="mt-3 font-display text-3xl sm:text-4xl md:text-5xl font-extrabold text-slate-900 leading-tight">
+              What We Do
+            </h2>
+            <p className="mt-4 text-slate-600 text-base sm:text-lg leading-relaxed">
+              Sumiraj delivers engineered steel building solutions designed to meet diverse industrial, commercial, warehousing, and infrastructure requirements.
+            </p>
+          </div>
+
+          {/* 5 Offerings 5-Column Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 xl:gap-6">
+            {whatWeDoOfferings.map((item) => (
+              <div
+                key={item.step}
+                className="group bg-white p-4 sm:p-5 rounded-2xl border border-slate-200/90 shadow-sm hover:shadow-md hover:border-accent/40 transition-all duration-300 flex flex-col justify-between"
+              >
+                <div>
+                  {/* Image Container */}
+                  <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-slate-100 mb-4">
+                    <img
+                      src={item.image}
+                      alt={item.alt}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                    <span className="absolute top-2.5 left-2.5 font-mono text-xs font-extrabold text-accent bg-white/95 backdrop-blur-md border border-slate-200/60 px-2.5 py-1 rounded-md shadow-xs">
+                      {item.step}
+                    </span>
+                  </div>
+
+                  {/* Title & Description */}
+                  <h3 className="font-display text-base sm:text-lg font-bold text-slate-900 group-hover:text-accent transition duration-300 mb-2">
+                    {item.title}
+                  </h3>
+                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                    {item.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>

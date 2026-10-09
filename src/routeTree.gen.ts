@@ -17,6 +17,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as PortfolioIndexRouteImport } from './routes/portfolio.index'
 import { Route as BuildingSystemsIndexRouteImport } from './routes/building-systems.index'
 import { Route as BlogIndexRouteImport } from './routes/blog.index'
+import { Route as PortfolioIdRouteImport } from './routes/portfolio.$id'
 import { Route as BuildingSystemsSystemIdRouteImport } from './routes/building-systems.$systemId'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 
@@ -60,6 +61,11 @@ const BlogIndexRoute = BlogIndexRouteImport.update({
   path: '/blog/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PortfolioIdRoute = PortfolioIdRouteImport.update({
+  id: '/portfolio/$id',
+  path: '/portfolio/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BuildingSystemsSystemIdRoute = BuildingSystemsSystemIdRouteImport.update({
   id: '/building-systems/$systemId',
   path: '/building-systems/$systemId',
@@ -79,6 +85,7 @@ export interface FileRoutesByFullPath {
   '/manufacturing': typeof ManufacturingRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/building-systems/$systemId': typeof BuildingSystemsSystemIdRoute
+  '/portfolio/$id': typeof PortfolioIdRoute
   '/blog/': typeof BlogIndexRoute
   '/building-systems/': typeof BuildingSystemsIndexRoute
   '/portfolio/': typeof PortfolioIndexRoute
@@ -91,6 +98,7 @@ export interface FileRoutesByTo {
   '/manufacturing': typeof ManufacturingRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/building-systems/$systemId': typeof BuildingSystemsSystemIdRoute
+  '/portfolio/$id': typeof PortfolioIdRoute
   '/blog': typeof BlogIndexRoute
   '/building-systems': typeof BuildingSystemsIndexRoute
   '/portfolio': typeof PortfolioIndexRoute
@@ -104,6 +112,7 @@ export interface FileRoutesById {
   '/manufacturing': typeof ManufacturingRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/building-systems/$systemId': typeof BuildingSystemsSystemIdRoute
+  '/portfolio/$id': typeof PortfolioIdRoute
   '/blog/': typeof BlogIndexRoute
   '/building-systems/': typeof BuildingSystemsIndexRoute
   '/portfolio/': typeof PortfolioIndexRoute
@@ -118,6 +127,7 @@ export interface FileRouteTypes {
     | '/manufacturing'
     | '/blog/$slug'
     | '/building-systems/$systemId'
+    | '/portfolio/$id'
     | '/blog/'
     | '/building-systems/'
     | '/portfolio/'
@@ -130,6 +140,7 @@ export interface FileRouteTypes {
     | '/manufacturing'
     | '/blog/$slug'
     | '/building-systems/$systemId'
+    | '/portfolio/$id'
     | '/blog'
     | '/building-systems'
     | '/portfolio'
@@ -142,6 +153,7 @@ export interface FileRouteTypes {
     | '/manufacturing'
     | '/blog/$slug'
     | '/building-systems/$systemId'
+    | '/portfolio/$id'
     | '/blog/'
     | '/building-systems/'
     | '/portfolio/'
@@ -155,6 +167,7 @@ export interface RootRouteChildren {
   ManufacturingRoute: typeof ManufacturingRoute
   BlogSlugRoute: typeof BlogSlugRoute
   BuildingSystemsSystemIdRoute: typeof BuildingSystemsSystemIdRoute
+  PortfolioIdRoute: typeof PortfolioIdRoute
   BlogIndexRoute: typeof BlogIndexRoute
   BuildingSystemsIndexRoute: typeof BuildingSystemsIndexRoute
   PortfolioIndexRoute: typeof PortfolioIndexRoute
@@ -218,6 +231,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/portfolio/$id': {
+      id: '/portfolio/$id'
+      path: '/portfolio/$id'
+      fullPath: '/portfolio/$id'
+      preLoaderRoute: typeof PortfolioIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/building-systems/$systemId': {
       id: '/building-systems/$systemId'
       path: '/building-systems/$systemId'
@@ -243,6 +263,7 @@ const rootRouteChildren: RootRouteChildren = {
   ManufacturingRoute: ManufacturingRoute,
   BlogSlugRoute: BlogSlugRoute,
   BuildingSystemsSystemIdRoute: BuildingSystemsSystemIdRoute,
+  PortfolioIdRoute: PortfolioIdRoute,
   BlogIndexRoute: BlogIndexRoute,
   BuildingSystemsIndexRoute: BuildingSystemsIndexRoute,
   PortfolioIndexRoute: PortfolioIndexRoute,

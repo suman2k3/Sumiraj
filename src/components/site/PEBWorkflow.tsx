@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import primaryFramingImg from "@/assets/hero-primary-framing.jpg";
 import aboutImg from "@/assets/hero-about.jpg";
 import secondaryFramingImg from "@/assets/hero-secondary-framing.jpg";
@@ -17,10 +17,10 @@ interface WorkflowStep {
 const steps: WorkflowStep[] = [
   {
     step: "01",
-    title: "Construction Engineering",
+    title: "Consultation",
     desc: "Project requirements, site conditions, structural needs, and operational requirements are evaluated to establish the right engineering approach for the project.",
     image: primaryFramingImg,
-    alt: "PEB construction engineering and project planning",
+    alt: "Consultation",
   },
   {
     step: "02",
@@ -59,7 +59,7 @@ const steps: WorkflowStep[] = [
   },
 ];
 
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -69,7 +69,7 @@ const containerVariants = {
   },
 };
 
-const itemVariants = {
+const itemVariants: Variants = {
   hidden: { opacity: 0, y: 20 },
   visible: {
     opacity: 1,

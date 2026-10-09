@@ -87,7 +87,16 @@ export function getPortfolioProjects(): Project[] {
 
 export function getPortfolioProjectById(id: string): Project | undefined {
   const projects = getStoredProjects();
-  return projects.find((p) => p.id === id || p.slug === id || p._id === id);
+  const normalizedSearch = id.toLowerCase().trim();
+  return projects.find(
+    (p) => 
+      p.id === id || 
+      p.slug === id || 
+      p._id === id || 
+      p.id?.toLowerCase() === normalizedSearch || 
+      p.slug?.toLowerCase() === normalizedSearch ||
+      generateSlug(p.title) === normalizedSearch
+  );
 }
 
 /**

@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
 import { Layout } from "@/components/site/Layout";
 import { PageHero } from "@/components/site/PageHero";
-import { Project } from "@/lib/portfolioData";
 import { usePortfolioProjects } from "@/lib/portfolioStore";
 import heroImg from "@/assets/hero-gallery.jpg";
 import { 
@@ -14,23 +13,19 @@ import {
   Search, 
   LayoutGrid, 
   List, 
-  Eye, 
-  X, 
-  CheckCircle2, 
-  Sparkles, 
   SlidersHorizontal, 
   HardHat,
-  Maximize2
+  X
 } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 
 export const Route = createFileRoute("/portfolio/")({
   head: () => ({
     meta: [
       { title: "Our Portfolio | Completed PEB & Steel Projects | Sumiraj" },
-      { name: "description", content: "Explore Sumiraj's portfolio of over 100+ prestigious pre-engineered steel buildings, warehouses, and industrial plants across India." },
+      { name: "description", content: "Explore Sumiraj's portfolio of over 300+ prestigious pre-engineered steel buildings, warehouses, and industrial plants across India." },
       { property: "og:title", content: "Sumiraj PEB Projects Portfolio" },
-      { property: "og:description", content: "100+ projects completed covering 20M+ square feet of premium industrial and commercial space." },
+      { property: "og:description", content: "300+ projects completed covering 20M+ square feet of premium industrial and commercial space." },
     ],
   }),
   component: PortfolioListing,
@@ -41,8 +36,6 @@ function PortfolioListing() {
   const [activeFilter, setActiveFilter] = useState<string>("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
-  const [previewProject, setPreviewProject] = useState<Project | null>(null);
-  const [previewActiveImg, setPreviewActiveImg] = useState<string>("");
 
   // Extract unique categories dynamically + standard tags
   const categories = useMemo(() => {
@@ -68,7 +61,7 @@ function PortfolioListing() {
   }, [portfolioProjects, activeFilter, searchQuery]);
 
   const stats = [
-    { value: "100+", label: "Projects Delivered", desc: "Across 15+ States", icon: Building2 },
+    { value: "300+", label: "Projects Delivered", desc: "Across 15+ States", icon: Building2 },
     { value: "20M+", label: "Area Erected (Sq. Ft.)", desc: "Precision Fabrication", icon: Layers },
     { value: "9+", label: "Years Engineering", desc: "ISO 9001 Certified", icon: CalendarRange },
     { value: "100%", label: "On-Time Erection", desc: "Zero Safety Incidents", icon: HardHat }
@@ -111,12 +104,12 @@ function PortfolioListing() {
       <section className="bg-slate-50/70 py-16">
         <div className="container-x mx-auto max-w-[1400px]">
           
-          {/* Interactive Control Header */}
+          {/* Interactive Control Header & Filter Controls */}
           <div className="rounded-2xl bg-white border border-slate-200 shadow-sm p-6 mb-10 space-y-6">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
               <div>
                 <span className="text-xs font-bold uppercase tracking-widest text-accent flex items-center gap-1.5">
-                  <SlidersHorizontal size={14} /> Interactive Catalog
+                  <SlidersHorizontal size={14} /> Structural Catalog
                 </span>
                 <h2 className="font-display text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">
                   Browse Structural Works
@@ -190,10 +183,12 @@ function PortfolioListing() {
             </div>
           </div>
 
-          {/* Unique Grid Layout View */}
+          {/* Grid View Mode */}
           {viewMode === "grid" ? (
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
               {filteredProjects.map((project) => {
+                const projectSlug = project.slug || project.id;
+
                 return (
                   <motion.article 
                     layout
@@ -203,57 +198,51 @@ function PortfolioListing() {
                     key={project.id}
                     className="group flex flex-col overflow-hidden rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:shadow-xl hover:border-slate-300 transition-all duration-300 relative border-t-4 border-t-accent"
                   >
-                    {/* Clean Image Frame without image badges */}
-                    <div className="aspect-[16/9] w-full bg-slate-950 flex items-center justify-center relative overflow-hidden rounded-t-xl border-b border-slate-800">
+                    {/* Image Link Frame */}
+                    <Link 
+                      to="/portfolio/$id" 
+                      params={{ id: projectSlug }}
+                      className="aspect-[16/9] w-full bg-slate-950 flex items-center justify-center relative overflow-hidden rounded-t-xl border-b border-slate-800 block cursor-pointer"
+                    >
                       <img 
                         src={project.image} 
                         alt={project.title} 
-                        className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105 cursor-pointer"
+                        className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
                         loading="lazy"
-                        onClick={() => {
-                          setPreviewProject(project);
-                          setPreviewActiveImg(project.image);
-                        }}
                       />
-                    </div>
+                    </Link>
 
-                    {/* Card Info Body: Title + Category right side, Location below, and Button */}
+                    {/* Card Body */}
                     <div className="p-5 flex flex-col justify-between flex-1 bg-white space-y-4">
                       <div>
-                        {/* Title & Category Badge to the right side of Title */}
                         <div className="flex items-start justify-between gap-3">
-                          <h3 
-                            onClick={() => {
-                              setPreviewProject(project);
-                              setPreviewActiveImg(project.image);
-                            }}
-                            className="font-display text-base sm:text-lg font-bold text-slate-900 hover:text-accent transition duration-300 leading-snug cursor-pointer flex-1"
-                          >
-                            {project.title}
+                          <h3 className="font-display text-base sm:text-lg font-bold text-slate-900 group-hover:text-accent transition duration-300 leading-snug flex-1">
+                            <Link to="/portfolio/$id" params={{ id: projectSlug }}>
+                              {project.title}
+                            </Link>
                           </h3>
                           <span className="rounded-md bg-accent/10 px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-accent border border-accent/20 shrink-0">
                             {project.category}
                           </span>
                         </div>
 
-                        {/* Location */}
-                        <div className="flex items-center gap-1.5 text-xs font-medium text-slate-500 mt-2">
-                          <MapPin size={13} className="text-accent shrink-0" />
-                          <span className="truncate">{project.location}</span>
-                        </div>
+                        {project.location && (
+                          <div className="flex items-center gap-1.5 text-xs font-medium text-slate-500 mt-2">
+                            <MapPin size={13} className="text-accent shrink-0" />
+                            <span className="truncate">{project.location}</span>
+                          </div>
+                        )}
                       </div>
 
-                      {/* Quick View Button */}
+                      {/* View Details Action Button */}
                       <div className="pt-3 border-t border-slate-100">
-                        <button
-                          onClick={() => {
-                            setPreviewProject(project);
-                            setPreviewActiveImg(project.image);
-                          }}
+                        <Link
+                          to="/portfolio/$id"
+                          params={{ id: projectSlug }}
                           className="w-full inline-flex items-center justify-center gap-1.5 rounded-xl bg-accent px-4 py-2.5 text-xs font-bold text-white hover:brightness-110 transition duration-200 shadow-sm shadow-accent/15"
                         >
-                          <Eye size={14} /> Quick View
-                        </button>
+                          View Details <ArrowRight size={14} />
+                        </Link>
                       </div>
                     </div>
                   </motion.article>
@@ -261,9 +250,11 @@ function PortfolioListing() {
               })}
             </div>
           ) : (
-            /* Compact List View Mode */
+            /* List View Mode */
             <div className="space-y-4">
               {filteredProjects.map((project) => {
+                const projectSlug = project.slug || project.id;
+
                 return (
                   <motion.article 
                     layout
@@ -272,48 +263,42 @@ function PortfolioListing() {
                     key={project.id}
                     className="group flex flex-col md:flex-row items-center rounded-2xl bg-white border border-slate-200 shadow-sm hover:shadow-lg transition p-4 md:p-5 gap-6 border-l-4 border-l-accent"
                   >
-                    <div 
-                      onClick={() => {
-                        setPreviewProject(project);
-                        setPreviewActiveImg(project.image);
-                      }}
-                      className="w-full md:w-64 aspect-[16/9] rounded-xl overflow-hidden relative bg-slate-950 shrink-0 flex items-center justify-center cursor-pointer"
+                    <Link 
+                      to="/portfolio/$id" 
+                      params={{ id: projectSlug }}
+                      className="w-full md:w-64 aspect-[16/9] rounded-xl overflow-hidden relative bg-slate-950 shrink-0 flex items-center justify-center block cursor-pointer"
                     >
                       <img src={project.image} alt={project.title} className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105" />
-                    </div>
+                    </Link>
 
                     <div className="flex-1 min-w-0 space-y-2">
                       <div className="flex items-center justify-between gap-3">
-                        <h3 
-                          onClick={() => {
-                            setPreviewProject(project);
-                            setPreviewActiveImg(project.image);
-                          }}
-                          className="font-display text-xl font-bold text-slate-900 hover:text-accent transition cursor-pointer"
-                        >
-                          {project.title}
+                        <h3 className="font-display text-xl font-bold text-slate-900 group-hover:text-accent transition">
+                          <Link to="/portfolio/$id" params={{ id: projectSlug }}>
+                            {project.title}
+                          </Link>
                         </h3>
                         <span className="rounded-md bg-accent/10 px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider text-accent border border-accent/20">
                           {project.category}
                         </span>
                       </div>
 
-                      <div className="flex items-center gap-1.5 text-xs font-medium text-slate-500">
-                        <MapPin size={13} className="text-accent shrink-0" />
-                        <span>{project.location}</span>
-                      </div>
+                      {project.location && (
+                        <div className="flex items-center gap-1.5 text-xs font-medium text-slate-500">
+                          <MapPin size={13} className="text-accent shrink-0" />
+                          <span>{project.location}</span>
+                        </div>
+                      )}
                     </div>
 
                     <div className="flex items-center shrink-0 w-full md:w-auto justify-end border-t md:border-t-0 md:border-l border-slate-100 pt-4 md:pt-0 md:pl-6">
-                      <button
-                        onClick={() => {
-                          setPreviewProject(project);
-                          setPreviewActiveImg(project.image);
-                        }}
+                      <Link
+                        to="/portfolio/$id"
+                        params={{ id: projectSlug }}
                         className="inline-flex w-full md:w-auto items-center justify-center gap-1.5 rounded-xl bg-accent px-5 py-2.5 text-xs font-bold text-white hover:brightness-110 transition shadow shadow-accent/15"
                       >
-                        <Eye size={14} /> Quick View
-                      </button>
+                        View Details <ArrowRight size={14} />
+                      </Link>
                     </div>
                   </motion.article>
                 );
@@ -343,107 +328,6 @@ function PortfolioListing() {
 
         </div>
       </section>
-
-      {/* Quick View Inspection Modal Dialog */}
-      <AnimatePresence>
-        {previewProject && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full overflow-hidden border border-slate-200 relative flex flex-col max-h-[90vh]"
-            >
-              {/* Modal Header: Category right side of title */}
-              <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-900 text-white">
-                <div className="flex items-center gap-3">
-                  <h3 className="font-display text-lg sm:text-xl font-bold text-white">{previewProject.title}</h3>
-                  <span className="rounded-md bg-accent px-2.5 py-0.5 text-xs font-bold uppercase tracking-wider text-white shadow-sm">
-                    {previewProject.category}
-                  </span>
-                </div>
-                <button
-                  onClick={() => setPreviewProject(null)}
-                  className="rounded-full bg-slate-800 hover:bg-slate-700 p-2 text-slate-300 transition"
-                >
-                  <X size={18} />
-                </button>
-              </div>
-
-              {/* Modal Body */}
-              <div className="p-6 overflow-y-auto space-y-6">
-                {/* Image Gallery Showcase - Full Cover Display */}
-                <div className="space-y-3">
-                  <div className="aspect-[16/9] w-full overflow-hidden rounded-xl bg-slate-950 border border-slate-800 shadow-inner flex items-center justify-center">
-                    <img 
-                      src={previewActiveImg || previewProject.image} 
-                      alt={previewProject.title} 
-                      className="h-full w-full object-cover object-center" 
-                    />
-                  </div>
-                  {previewProject.gallery && previewProject.gallery.length > 1 && (
-                    <div className="flex gap-3 overflow-x-auto pb-2">
-                      {previewProject.gallery.map((img, idx) => (
-                        <button
-                          key={idx}
-                          onClick={() => setPreviewActiveImg(img)}
-                          className={`aspect-[16/10] w-24 rounded-lg overflow-hidden border-2 bg-slate-900 transition ${
-                            (previewActiveImg || previewProject.image) === img ? "border-accent scale-95" : "border-slate-200"
-                          }`}
-                        >
-                          <img src={img} alt="thumb" className="h-full w-full object-cover object-center" />
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-
-                {/* Point-wise Actual Project Data Down The Image */}
-                <div className="bg-slate-50 rounded-2xl border border-slate-200/80 p-5 space-y-3">
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 border-b border-slate-200/70 pb-2">
-                    Project Specifications & Details
-                  </h4>
-                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-slate-800 font-medium">
-                    <li className="flex items-center gap-2">
-                      <span className="h-2 w-2 rounded-full bg-accent shrink-0" />
-                      <span><strong>Location:</strong> {previewProject.location}</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <span className="h-2 w-2 rounded-full bg-accent shrink-0" />
-                      <span><strong>Work Type:</strong> {previewProject.workType || previewProject.specifications?.process || "PEB Fabrication & Erection"}</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <span className="h-2 w-2 rounded-full bg-accent shrink-0" />
-                      <span><strong>Built-up Area:</strong> {previewProject.builtUpArea || previewProject.specifications?.area || "50,000 Sq. Ft."}</span>
-                    </li>
-                    <li className="flex items-center gap-2">
-                      <span className="h-2 w-2 rounded-full bg-accent shrink-0" />
-                      <span><strong>Duration:</strong> {previewProject.duration || previewProject.specifications?.duration || "4 Months"}</span>
-                    </li>
-                    <li className="flex items-center gap-2 sm:col-span-2">
-                      <span className="h-2 w-2 rounded-full bg-accent shrink-0" />
-                      <span><strong>Status:</strong> <span className="inline-flex items-center gap-1 font-bold text-emerald-700 bg-emerald-100/70 px-2.5 py-0.5 rounded-md border border-emerald-300">{previewProject.status || previewProject.specifications?.status || "Completed"}</span></span>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-
-              {/* Modal Footer */}
-              <div className="px-6 py-4 border-t border-slate-100 bg-slate-50 flex items-center justify-between">
-                <span className="text-xs font-semibold text-slate-500 flex items-center gap-1">
-                  <CheckCircle2 size={13} className="text-accent" /> ISO 9001 Certified Engineering
-                </span>
-                <button
-                  onClick={() => setPreviewProject(null)}
-                  className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-5 py-2.5 text-xs font-bold text-white hover:bg-slate-800 transition shadow-md"
-                >
-                  Close
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
 
       {/* Turnkey Call to Action */}
       <section className="bg-slate-950 py-20 text-white border-t border-slate-800">

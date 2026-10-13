@@ -84,9 +84,8 @@ function Contact() {
     email: "",
     mobile: "",
     sourceLocation: "",
-    destinationLocation: "",
     shipmentWeight: "",
-    enquiryType: "Website Enquiry",
+    enquiryType: "Pre-Engineered Buildings (PEB)",
     message: "",
   });
 
@@ -135,7 +134,6 @@ function Contact() {
       email: formData.email,
       mobile: formData.mobile,
       sourceLocation: formData.sourceLocation,
-      destinationLocation: formData.destinationLocation,
       shipmentWeight: formData.shipmentWeight,
       enquiryType: formData.enquiryType,
       message: formData.message,
@@ -152,7 +150,6 @@ function Contact() {
         email: formData.email,
         mobile: formData.mobile,
         sourceLocation: formData.sourceLocation,
-        destinationLocation: formData.destinationLocation,
         shipmentWeight: formData.shipmentWeight,
         enquiryType: formData.enquiryType,
         message: formData.message,
@@ -176,9 +173,8 @@ function Contact() {
       email: "",
       mobile: "",
       sourceLocation: "",
-      destinationLocation: "",
       shipmentWeight: "",
-      enquiryType: "Website Enquiry",
+      enquiryType: "Pre-Engineered Buildings (PEB)",
       message: "",
     });
   };
@@ -216,9 +212,8 @@ function Contact() {
                   <div><span className="font-bold">Email:</span> {submittedResponse.email}</div>
                   <div><span className="font-bold">Mobile:</span> {submittedResponse.mobile}</div>
                   <div><span className="font-bold">Project location:</span> {submittedResponse.sourceLocation || "N/A"}</div>
-                  <div><span className="font-bold">Destination Location:</span> {submittedResponse.destinationLocation || "N/A"}</div>
                   <div><span className="font-bold">Approximate Area:</span> {submittedResponse.shipmentWeight || "N/A"}</div>
-                  <div><span className="font-bold">Project Type:</span> {submittedResponse.enquiryType}</div>
+                  <div className="md:col-span-2"><span className="font-bold">Project Type:</span> {submittedResponse.enquiryType}</div>
                   <div className="md:col-span-2"><span className="font-bold">Message:</span> {submittedResponse.message}</div>
                   {submittedResponse.attachmentNames && submittedResponse.attachmentNames.length > 0 && (
                     <div className="md:col-span-2">
@@ -298,15 +293,6 @@ function Contact() {
                       placeholder="e.g. Greater Noida, Uttar Pradesh"
                     />
                   </Field>
-                  <Field label="Destination Location">
-                    <input
-                      name="destinationLocation"
-                      value={formData.destinationLocation}
-                      onChange={handleChange}
-                      className={inputCls}
-                      placeholder="e.g. Pune, Maharashtra"
-                    />
-                  </Field>
                   <Field label="Approximate Area">
                     <input
                       name="shipmentWeight"
@@ -316,14 +302,13 @@ function Contact() {
                       placeholder="e.g. 10,000 sq. ft. or 1,000 sq. m."
                     />
                   </Field>
-                  <Field label="Project Type">
+                  <Field label="Project Type" className="md:col-span-2">
                     <select
                       name="enquiryType"
                       value={formData.enquiryType}
                       onChange={handleChange}
                       className={inputCls}
                     >
-                      <option value="Website Enquiry">Website Enquiry</option>
                       <option value="Pre-Engineered Buildings (PEB)">Pre-Engineered Buildings (PEB)</option>
                       <option value="Industrial Warehouses">Industrial Warehouses</option>
                       <option value="Structural Steel Trusses">Structural Steel Trusses</option>
@@ -555,9 +540,9 @@ function Contact() {
   );
 }
 
-function Field({ label, required, children }: { label: string; required?: boolean; children: ReactNode }) {
+function Field({ label, required, children, className }: { label: string; required?: boolean; children: ReactNode; className?: string }) {
   return (
-    <label className="block">
+    <label className={`block ${className || ""}`}>
       <span className="mb-1.5 block text-xs font-semibold uppercase tracking-widest text-muted-foreground">
         {label}{required && <span className="ml-1 text-accent">*</span>}
       </span>

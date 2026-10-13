@@ -68,123 +68,95 @@ const heroImages = [
   }
 ];
 
-const companies = [
-  "Shell", "Siemens", "Bosch", "L&T", "Reliance", "TATA Steel", 
-  "JSW Steel", "Adani Group", "Godrej", "Mahindra", "DLF", "Hindalco"
+interface ClientCompany {
+  name: string;
+  displayName: string;
+  logoUrl: string;
+}
+
+const clientCompanies: ClientCompany[] = [
+  {
+    name: "MAHAGUN INDUSTRIES PRIVATE LIMITED",
+    displayName: "Mahagun Group",
+    logoUrl: "/images/client-logos/mahagun-group.png",
+  },
+  {
+    name: "HEIDELBERGCEMENT INDIA LIMITED",
+    displayName: "Heidelberg Materials",
+    logoUrl: "/images/client-logos/heidelberg-materials.svg",
+  },
+  {
+    name: "KURZ India Pvt. Ltd.",
+    displayName: "KURZ India",
+    logoUrl: "/images/client-logos/kurz-india.svg",
+  },
+  {
+    name: "RCRS Innovations Limited",
+    displayName: "RCRS Innovations",
+    logoUrl: "/images/client-logos/rcrs-innovations.png",
+  },
+  {
+    name: "SANROK ENTERPRISES",
+    displayName: "Sanrok Enterprises",
+    logoUrl: "/images/client-logos/sanrok-enterprises.png",
+  },
+  {
+    name: "Ritika Systems Private Limited",
+    displayName: "Ritika Systems",
+    logoUrl: "/images/client-logos/ritika-systems.png",
+  },
+  {
+    name: "Taurus Packaging Pvt. Ltd.",
+    displayName: "Taurus Packaging",
+    logoUrl: "/images/client-logos/taurus-packaging.png",
+  },
+  {
+    name: "Eppeltone Engineers Limited",
+    displayName: "Eppeltone Engineers",
+    logoUrl: "/images/client-logos/eppeltone-engineers.png",
+  },
+  {
+    name: "Assago Industries Private Limited",
+    displayName: "Assago Industries",
+    logoUrl: "/images/client-logos/assago-industries.gif",
+  },
+  {
+    name: "Alcolite India",
+    displayName: "Alcolite India",
+    logoUrl: "/images/client-logos/alcolite-india.png",
+  },
+  {
+    name: "Panjetani Buildwell Pvt Ltd",
+    displayName: "Panjetani Buildwell",
+    logoUrl: "/images/client-logos/panjetani-buildwell.png",
+  },
+  {
+    name: "SRL IMPEX",
+    displayName: "SRL Impex",
+    logoUrl: "/images/client-logos/srl-impex.webp",
+  },
+  {
+    name: "Astha Poly Plast Pvt. Ltd. (KB Group)",
+    displayName: "KB Group",
+    logoUrl: "/images/client-logos/kb-polychem.png",
+  },
+  {
+    name: "Shiv das & Sons",
+    displayName: "Shiv Das & Sons",
+    logoUrl: "/images/client-logos/shivdas-books.jpg",
+  },
 ];
 
-function CompanyLogo({ name }: { name: string }) {
-  const renderLogo = () => {
-    switch (name) {
-      case "Shell":
-        return (
-          <svg viewBox="0 0 24 24" className="h-9 w-9 text-[#FFD500] fill-[#FFD500] stroke-[#EC1C24]" strokeWidth="1.5">
-            <path d="M12 2C11.5 2.1 6.5 6 5.5 10.5C4.8 13.5 3.5 16 2.5 17.5C2 18.2 2.1 19 2.8 19.5C3.8 20.2 6.5 21.5 12 21.5C17.5 21.5 20.2 20.2 21.2 19.5C21.9 19 22 18.2 21.5 17.5C20.5 16 19.2 13.5 18.5 10.5C17.5 6 12.5 2.1 12 2Z"/>
-            <path d="M12 2V21.5M7.5 7C8.5 11 9.5 16 12 21.5M16.5 7C15.5 11 14.5 16 12 21.5M4 14.5C6.5 16.5 9 19.5 12 21.5M20 14.5C17.5 16.5 15 19.5 12 21.5" strokeLinecap="round"/>
-          </svg>
-        );
-      case "Siemens":
-        return (
-          <span className="font-sans font-black text-xl tracking-tighter text-[#00828A]">
-            SIEMENS
-          </span>
-        );
-      case "Bosch":
-        return (
-          <svg viewBox="0 0 24 24" className="h-9 w-9">
-            <circle cx="12" cy="12" r="10" stroke="#E31B23" strokeWidth="3.5" fill="none"/>
-            <circle cx="12" cy="12" r="6" fill="#334155"/>
-            <rect x="10.5" y="4" width="3" height="16" fill="#334155"/>
-            <rect x="4" y="10.5" width="16" height="3" fill="#334155"/>
-            <circle cx="12" cy="12" r="4.5" fill="#fff"/>
-          </svg>
-        );
-      case "L&T":
-        return (
-          <span className="font-serif font-black text-2xl tracking-tight text-[#0F2C59]">
-            L&T
-          </span>
-        );
-      case "Reliance":
-        return (
-          <svg viewBox="0 0 24 24" className="h-9 w-9">
-            <circle cx="12" cy="12" r="10" fill="#0A3066"/>
-            <path d="M12 5C12 5 15 8 15 11C15 14 12 16 12 16C12 16 9 14 9 11C9 8 12 5 12 5Z" fill="#E31B23"/>
-            <circle cx="12" cy="12" r="2.5" fill="#FFF"/>
-          </svg>
-        );
-      case "TATA Steel":
-        return (
-          <div className="flex items-center gap-1.5 text-[#005CA9]">
-            <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <ellipse cx="12" cy="12" rx="9" ry="7"/>
-              <path d="M7 16C9 12 11 9 12 7C13 9 15 12 17 16" strokeLinecap="round"/>
-              <path d="M12 7V17" strokeLinecap="round"/>
-            </svg>
-            <span className="font-display font-bold text-sm tracking-tight text-slate-800">TATA STEEL</span>
-          </div>
-        );
-      case "JSW Steel":
-        return (
-          <div className="flex items-baseline gap-0.5">
-            <span className="font-sans font-black text-lg tracking-tight text-[#00529B]">
-              JSW
-            </span>
-            <span className="text-[#E31B23] text-xs font-bold uppercase tracking-wider">Steel</span>
-          </div>
-        );
-      case "Adani Group":
-        return (
-          <span className="font-sans font-extrabold text-lg text-slate-800 tracking-tight">
-            adani<span className="text-[#00529B]">.</span>
-          </span>
-        );
-      case "Godrej":
-        return (
-          <span className="font-serif italic font-extrabold text-2xl text-[#E31837] tracking-tight">
-            Godrej
-          </span>
-        );
-      case "Mahindra":
-        return (
-          <div className="flex items-center gap-1.5 text-[#DD1D21]">
-            <svg viewBox="0 0 24 24" className="h-7 w-7" fill="none" stroke="currentColor" strokeWidth="3">
-              <path d="M3 19L10 5L12 10L14 5L21 19" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M7 19H17" strokeLinecap="round"/>
-            </svg>
-            <span className="font-sans font-bold text-xs tracking-tight text-slate-800">MAHINDRA</span>
-          </div>
-        );
-      case "DLF":
-        return (
-          <div className="flex items-center gap-1.5 text-[#006A4E]">
-            <svg viewBox="0 0 24 24" className="h-7 w-7">
-              <polygon points="4,18 10,6 16,18" fill="currentColor" opacity="0.6"/>
-              <polygon points="8,18 14,6 20,18" fill="currentColor"/>
-            </svg>
-            <span className="font-display font-bold text-xs tracking-tight text-slate-800">DLF</span>
-          </div>
-        );
-      case "Hindalco":
-        return (
-          <div className="flex items-center gap-1 text-[#004A8F]">
-            <svg viewBox="0 0 24 24" className="h-6 w-6" fill="none" stroke="currentColor" strokeWidth="2.5">
-              <circle cx="12" cy="12" r="9"/>
-              <path d="M8 8H16V16H8V8Z" fill="currentColor" opacity="0.3"/>
-              <path d="M12 6V18M6 12H18" strokeLinecap="round"/>
-            </svg>
-            <span className="font-sans font-bold text-xs tracking-tight text-slate-800">HINDALCO</span>
-          </div>
-        );
-      default:
-        return <span className="font-bold">{name}</span>;
-    }
-  };
-
+function CompanyLogo({ company }: { company: ClientCompany }) {
   return (
     <div className="flex items-center justify-center min-w-[170px] h-16 px-5 rounded-lg bg-slate-50 border border-slate-100 shadow-sm transition hover:border-accent/40 group">
-      <div className="filter grayscale opacity-75 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
-        {renderLogo()}
+      <div className="flex items-center justify-center h-full w-full">
+        <img
+          src={company.logoUrl}
+          alt={`${company.displayName} logo`}
+          className="max-h-8 max-w-[130px] w-auto h-auto object-contain transition-transform duration-200 group-hover:scale-105"
+          loading="lazy"
+        />
       </div>
     </div>
   );
@@ -305,20 +277,20 @@ function Home() {
         {/* Marquee Container */}
         <div className="relative flex w-full overflow-x-hidden">
           <div className="animate-marquee flex items-center gap-12 py-2">
-            {companies.map((company, index) => (
+            {clientCompanies.map((company, index) => (
               <CompanyLogo
-                key={`${company}-${index}`}
-                name={company}
+                key={`${company.name}-${index}`}
+                company={company}
               />
             ))}
           </div>
           
           {/* Duplicate for infinite scrolling */}
           <div className="animate-marquee flex items-center gap-12 py-2" aria-hidden="true">
-            {companies.map((company, index) => (
+            {clientCompanies.map((company, index) => (
               <CompanyLogo
-                key={`${company}-dup-${index}`}
-                name={company}
+                key={`${company.name}-dup-${index}`}
+                company={company}
               />
             ))}
           </div>

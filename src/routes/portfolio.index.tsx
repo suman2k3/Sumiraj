@@ -3,7 +3,7 @@ import { useState, useMemo } from "react";
 import { Layout } from "@/components/site/Layout";
 import { PageHero } from "@/components/site/PageHero";
 import { usePortfolioProjects } from "@/lib/portfolioStore";
-import heroImg from "@/assets/hero-gallery.jpg";
+import heroImg from "@/assets/hero-portfolio.jpg";
 import { 
   MapPin, 
   ArrowRight, 
@@ -77,9 +77,9 @@ function PortfolioListing() {
       <PageHero
         image={heroImg}
         breadcrumb="Portfolio"
-        eyebrow="Architectural Excellence & PEB Engineering"
-        title={<>Forging Landmarks for<br />Modern Industry.</>}
-        subtitle="Explore our portfolio of 100+ turnkey pre-engineered steel buildings, heavy industrial plants, and logistics parks engineered for maximum load efficiency and lifetime durability."
+        eyebrow="ARCHITECTURAL EXCELLENCE & PEB ENGINEERING"
+        title="Engineering Excellence in Every Project"
+        subtitle="Explore our portfolio of industrial steel structures built for performance and durability."
       />
 
       {/* Stats Spotlight Counter */}

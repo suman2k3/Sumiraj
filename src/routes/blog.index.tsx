@@ -83,9 +83,9 @@ function BlogListing() {
       <PageHero
         image={heroImg}
         breadcrumb="Blog"
-        eyebrow="Resources & Insights"
-        title={<>Steel Knowledge,<br />Forged by Experts.</>}
-        subtitle="Explore technical calculation guides, engineering analysis, pricing details, and PEB design methodologies written by our core engineering team."
+        eyebrow="Industries Insights"
+        title={<>Expert Knowledge On PEB's,<br />Industrial Buildings & Steel Structures.</>}
+        subtitle="Technical guide, engineering insights, project planning resourses & industry updates from the experts at sumiraj"
         height="md"
       />
 

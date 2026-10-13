@@ -44,7 +44,7 @@ export async function submitEnquiryApi(payload: EnquiryPayload): Promise<Enquiry
       formData.append("sourceLocation", (payload.sourceLocation || "").trim());
       formData.append("destinationLocation", (payload.destinationLocation || "").trim());
       formData.append("shipmentWeight", (payload.shipmentWeight || "").trim());
-      formData.append("enquiryType", (payload.enquiryType || "Website Enquiry").trim());
+      formData.append("enquiryType", (payload.enquiryType || "Pre-Engineered Buildings (PEB)").trim());
       formData.append("message", payload.message.trim());
 
       payload.attachments?.forEach((file) => {
@@ -69,7 +69,7 @@ export async function submitEnquiryApi(payload: EnquiryPayload): Promise<Enquiry
           sourceLocation: (payload.sourceLocation || "").trim(),
           destinationLocation: (payload.destinationLocation || "").trim(),
           shipmentWeight: (payload.shipmentWeight || "").trim(),
-          enquiryType: (payload.enquiryType || "Website Enquiry").trim(),
+          enquiryType: (payload.enquiryType || "Pre-Engineered Buildings (PEB)").trim(),
           message: payload.message.trim(),
         }),
       });

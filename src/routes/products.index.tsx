@@ -3,7 +3,7 @@ import { Layout } from "@/components/site/Layout";
 import { PageHero } from "@/components/site/PageHero";
 import { buildingSystems } from "@/lib/buildingSystemsData";
 import { motion } from "framer-motion";
-import heroImg from "@/assets/hero-peb-system.jpg";
+import heroImg from "@/assets/hero-products.jpg";
 import { Columns, Layers, Building2, Cog, ArrowRight, Shield, Award, Sparkles, Wrench, Download } from "lucide-react";
 
 export const Route = createFileRoute("/products/")({

@@ -1,6 +1,6 @@
 import { Link, useLocation } from "@tanstack/react-router";
 import { useState } from "react";
-import { Menu, X, ChevronDown } from "lucide-react";
+import { Menu, X, ChevronDown, ArrowRight } from "lucide-react";
 import { Logo } from "./Logo";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -82,6 +82,17 @@ export function Navbar() {
                   transition={{ duration: 0.15 }}
                   className="absolute left-0 top-full mt-1 w-72 rounded-lg border border-slate-150 bg-white p-2 shadow-xl ring-1 ring-black/5"
                 >
+                  <Link
+                    to="/products"
+                    onClick={() => setDropdownOpen(false)}
+                    activeOptions={{ exact: true }}
+                    activeProps={{ className: "text-accent bg-accent/5 font-bold" }}
+                    inactiveProps={{ className: "text-slate-900 font-bold hover:bg-slate-50 hover:text-accent" }}
+                    className="flex items-center justify-between rounded-md px-4 py-2.5 text-xs font-bold transition border-b border-slate-100 mb-1"
+                  >
+                    <span>All Products Overview</span>
+                    <ArrowRight size={13} className="text-accent" />
+                  </Link>
                   {productsSublinks.map((sublink) => (
                     <Link
                       key={sublink.to}
@@ -148,15 +159,30 @@ export function Navbar() {
 
             {/* Mobile Accordion for Products */}
             <div className="border-b border-slate-50 py-1">
-              <button
-                onClick={() => setMobileAccordionOpen(!mobileAccordionOpen)}
-                className="flex w-full items-center justify-between py-3 text-sm font-medium text-slate-600 hover:text-slate-900 outline-none"
-              >
-                <span className={isProductActive ? "text-accent font-bold" : ""}>
+              <div className="flex w-full items-center justify-between">
+                <Link
+                  to="/products"
+                  onClick={() => setOpen(false)}
+                  className={`flex-1 py-3 text-sm font-medium transition-colors ${
+                    isProductActive ? "text-accent font-bold" : "text-slate-600 hover:text-slate-900"
+                  }`}
+                >
                   Products
-                </span>
-                <ChevronDown size={16} className={`transition-transform duration-200 ${mobileAccordionOpen ? "rotate-180 text-accent" : "text-slate-400"}`} />
-              </button>
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => setMobileAccordionOpen(!mobileAccordionOpen)}
+                  className="p-3 text-slate-500 hover:text-slate-800 focus:outline-none"
+                  aria-label="Toggle Products submenu"
+                >
+                  <ChevronDown
+                    size={18}
+                    className={`transition-transform duration-200 ${
+                      mobileAccordionOpen ? "rotate-180 text-accent" : "text-slate-400"
+                    }`}
+                  />
+                </button>
+              </div>
 
               <AnimatePresence>
                 {mobileAccordionOpen && (
@@ -165,8 +191,19 @@ export function Navbar() {
                     animate={{ height: "auto", opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.2 }}
-                    className="overflow-hidden bg-slate-55/20 px-4 py-1 flex flex-col gap-1 border-l-2 border-accent/25 my-1"
+                    className="overflow-hidden bg-slate-55/20 px-4 py-1.5 flex flex-col gap-1 border-l-2 border-accent/25 my-1"
                   >
+                    <Link
+                      to="/products"
+                      onClick={() => setOpen(false)}
+                      activeOptions={{ exact: true }}
+                      activeProps={{ className: "text-accent font-bold" }}
+                      inactiveProps={{ className: "text-slate-900 font-bold hover:text-accent" }}
+                      className="py-2 text-xs font-bold transition flex items-center justify-between border-b border-slate-100 pb-2 mb-1"
+                    >
+                      <span>All Products Overview</span>
+                      <ArrowRight size={13} className="text-accent" />
+                    </Link>
                     {productsSublinks.map((sublink) => (
                       <Link
                         key={sublink.to}
@@ -176,7 +213,7 @@ export function Navbar() {
                         }}
                         activeProps={{ className: "text-accent font-bold" }}
                         inactiveProps={{ className: "text-slate-500 hover:text-slate-800" }}
-                        className="py-2.5 text-xs font-semibold transition"
+                        className="py-2 text-xs font-semibold transition"
                       >
                         {sublink.label}
                       </Link>

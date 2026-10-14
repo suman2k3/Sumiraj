@@ -1,10 +1,10 @@
 import { motion, type Variants } from "framer-motion";
-import primaryFramingImg from "@/assets/hero-primary-framing.jpg";
+import consultationImg from "@/assets/workflow-consultation.jpg";
 import aboutImg from "@/assets/hero-about.jpg";
-import secondaryFramingImg from "@/assets/hero-secondary-framing.jpg";
-import manufacturingImg from "@/assets/hero-manufacturing.jpg";
-import welderImg from "@/assets/img-welder.jpg";
-import erectionImg from "@/assets/hero-erection-installation.jpg";
+import detailingImg from "@/assets/workflow-detailing.jpg";
+import manufacturingImg from "@/assets/workflow-manufacturing.jpg";
+import qualityInspectionImg from "@/assets/workflow-quality-inspection.jpg";
+import erectionImg from "@/assets/workflow-erection-handover.jpg";
 
 interface WorkflowStep {
   step: string;
@@ -19,8 +19,8 @@ const steps: WorkflowStep[] = [
     step: "01",
     title: "Consultation",
     desc: "Project requirements, site conditions, structural needs, and operational requirements are evaluated to establish the right engineering approach for the project.",
-    image: primaryFramingImg,
-    alt: "Consultation",
+    image: consultationImg,
+    alt: "Sumiraj PEB project consultation and planning",
   },
   {
     step: "02",
@@ -33,29 +33,29 @@ const steps: WorkflowStep[] = [
     step: "03",
     title: "Detailing",
     desc: "Detailed fabrication drawings, connection details, and component specifications are prepared to ensure accuracy during manufacturing and erection.",
-    image: secondaryFramingImg,
-    alt: "PEB fabrication detailing",
+    image: detailingImg,
+    alt: "Sumiraj PEB fabrication detailing and 3D connection drawings",
   },
   {
     step: "04",
     title: "Manufacturing",
     desc: "Structural components are precision-fabricated through controlled manufacturing processes according to approved designs and specifications.",
     image: manufacturingImg,
-    alt: "PEB steel manufacturing facility",
+    alt: "Sumiraj PEB steel manufacturing and structural fabrication facility",
   },
   {
     step: "05",
     title: "Quality Inspection",
     desc: "Materials, dimensions, welding, fabrication, and finished components are inspected at critical stages to maintain consistent quality before dispatch.",
-    image: welderImg,
-    alt: "PEB quality inspection",
+    image: qualityInspectionImg,
+    alt: "Sumiraj PEB quality inspection and weld testing",
   },
   {
     step: "06",
     title: "Erection & Handover",
     desc: "Fabricated components are safely erected at the project site, followed by final checks, completion activities, and project handover.",
     image: erectionImg,
-    alt: "PEB erection and project handover",
+    alt: "Sumiraj PEB structural erection and project handover",
   },
 ];
 

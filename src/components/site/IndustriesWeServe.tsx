@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
-import manufacturingImg from "@/assets/hero-manufacturing.jpg";
+import manufacturingPlantsImg from "@/assets/industry-manufacturing-plants.jpg";
 import warehouseImg from "@/assets/img-warehouse.jpg";
 import logisticsImg from "@/assets/hero-home-3.jpg";
 
@@ -15,8 +15,8 @@ const row1Industries: IndustryItem[] = [
   {
     id: "manufacturing-plants",
     title: "Manufacturing Plants",
-    image: manufacturingImg,
-    alt: "Manufacturing plant steel structure",
+    image: manufacturingPlantsImg,
+    alt: "Manufacturing plants industrial steel fabrication and welding facility",
   },
   {
     id: "warehouses",

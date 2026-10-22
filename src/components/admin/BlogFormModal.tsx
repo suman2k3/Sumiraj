@@ -12,6 +12,12 @@ import {
   CheckCircle2,
   Trash2,
   Tag,
+  Clock,
+  Calendar,
+  CalendarClock,
+  Send,
+  FileText,
+  AlertCircle,
 } from "lucide-react";
 
 import { MarkdownRenderer, getFontStyleClass } from "@/routes/blog.$slug";
@@ -119,6 +125,8 @@ export function BlogFormModal({ isOpen, onClose, postToEdit, onSuccess }: BlogFo
   const [metaTitle, setMetaTitle] = useState("");
   const [metaDescription, setMetaDescription] = useState("");
   const [isPublished, setIsPublished] = useState(true);
+  const [publishStatus, setPublishStatus] = useState<"published" | "scheduled" | "draft">("published");
+  const [scheduledDateTime, setScheduledDateTime] = useState<string>("");
   const [editorMode, setEditorMode] = useState<"edit" | "preview">("edit");
 
   const [isLoading, setIsLoading] = useState(false);
@@ -159,7 +167,31 @@ export function BlogFormModal({ isOpen, onClose, postToEdit, onSuccess }: BlogFo
       setContent(ensureExplicitTagsInContent(rawContent));
       setMetaTitle(postToEdit.metaTitle || postToEdit.title || "");
       setMetaDescription(postToEdit.metaDescription || postToEdit.shortDescription || "");
-      setIsPublished(postToEdit.isPublished ?? true);
+
+      // Initialize publication & scheduling status
+      if (postToEdit.status === "draft" || (postToEdit.isPublished === false && !postToEdit.scheduledAt)) {
+        setPublishStatus("draft");
+        setScheduledDateTime("");
+        setIsPublished(false);
+      } else if (postToEdit.scheduledAt) {
+        setPublishStatus("scheduled");
+        const dt = new Date(postToEdit.scheduledAt);
+        if (!isNaN(dt.getTime())) {
+          const y = dt.getFullYear();
+          const m = String(dt.getMonth() + 1).padStart(2, "0");
+          const d = String(dt.getDate()).padStart(2, "0");
+          const hh = String(dt.getHours()).padStart(2, "0");
+          const mm = String(dt.getMinutes()).padStart(2, "0");
+          setScheduledDateTime(`${y}-${m}-${d}T${hh}:${mm}`);
+        } else {
+          setScheduledDateTime(postToEdit.scheduledAt);
+        }
+        setIsPublished(false);
+      } else {
+        setPublishStatus("published");
+        setScheduledDateTime("");
+        setIsPublished(true);
+      }
     } else {
       setTitle("");
       setSlug("");
@@ -177,11 +209,71 @@ export function BlogFormModal({ isOpen, onClose, postToEdit, onSuccess }: BlogFo
       setContent("");
       setMetaTitle("");
       setMetaDescription("");
+      setPublishStatus("published");
       setIsPublished(true);
+
+      // Pre-fill tomorrow 09:00 AM for convenience when scheduling
+      const tmr = new Date();
+      tmr.setDate(tmr.getDate() + 1);
+      tmr.setHours(9, 0, 0, 0);
+      const y = tmr.getFullYear();
+      const m = String(tmr.getMonth() + 1).padStart(2, "0");
+      const d = String(tmr.getDate()).padStart(2, "0");
+      setScheduledDateTime(`${y}-${m}-${d}T09:00`);
     }
     setError("");
     setImageError(false);
   }, [postToEdit, isOpen]);
+
+  const applyScheduleShortcut = (daysFromNow: number) => {
+    const target = new Date();
+    target.setDate(target.getDate() + daysFromNow);
+    target.setHours(9, 0, 0, 0);
+    const y = target.getFullYear();
+    const m = String(target.getMonth() + 1).padStart(2, "0");
+    const d = String(target.getDate()).padStart(2, "0");
+    setScheduledDateTime(`${y}-${m}-${d}T09:00`);
+    setPublishStatus("scheduled");
+    setIsPublished(false);
+  };
+
+  const scheduleSummary = useMemo(() => {
+    if (!scheduledDateTime) return null;
+    const target = new Date(scheduledDateTime);
+    if (isNaN(target.getTime())) return null;
+
+    const now = new Date();
+    const diffMs = target.getTime() - now.getTime();
+    const isPast = diffMs < 0;
+
+    const formattedDate = target.toLocaleDateString("en-US", {
+      weekday: "short",
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+    const formattedTime = target.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+
+    const diffHours = Math.round(Math.abs(diffMs) / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffHours / 24);
+
+    let relative = "";
+    if (isPast) {
+      relative = "Selected time is in the past (will publish immediately on save)";
+    } else if (diffDays === 0) {
+      relative = `Today in ~${diffHours} hour${diffHours === 1 ? "" : "s"}`;
+    } else if (diffDays === 1) {
+      relative = "Tomorrow";
+    } else {
+      relative = `In ${diffDays} days`;
+    }
+
+    return { formattedDate, formattedTime, relative, isPast };
+  }, [scheduledDateTime]);
 
   const handleDateInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const isoVal = e.target.value;
@@ -391,6 +483,44 @@ export function BlogFormModal({ isOpen, onClose, postToEdit, onSuccess }: BlogFo
     setError("");
 
     try {
+      let finalIsPublished = true;
+      let finalScheduledAt: string | undefined = undefined;
+      let finalStatus: "published" | "scheduled" | "draft" = "published";
+      let displayDate = date.trim() || formatDate(new Date());
+
+      if (publishStatus === "draft") {
+        finalIsPublished = false;
+        finalStatus = "draft";
+        finalScheduledAt = undefined;
+      } else if (publishStatus === "scheduled") {
+        if (!scheduledDateTime) {
+          setError("Please select a date and time to schedule the blog post.");
+          setIsLoading(false);
+          return;
+        }
+        const schedDate = new Date(scheduledDateTime);
+        if (isNaN(schedDate.getTime())) {
+          setError("Invalid scheduled date and time.");
+          setIsLoading(false);
+          return;
+        }
+
+        finalScheduledAt = schedDate.toISOString();
+        displayDate = formatDate(schedDate);
+
+        if (schedDate.getTime() > Date.now()) {
+          finalIsPublished = false;
+          finalStatus = "scheduled";
+        } else {
+          finalIsPublished = true;
+          finalStatus = "published";
+        }
+      } else {
+        finalIsPublished = true;
+        finalStatus = "published";
+        finalScheduledAt = undefined;
+      }
+
       const postData: BlogPost = {
         _id: postToEdit?._id,
         slug: slug.trim() || generateSlug(title),
@@ -399,14 +529,16 @@ export function BlogFormModal({ isOpen, onClose, postToEdit, onSuccess }: BlogFo
         content: content,
         image: featuredImage.trim() || "https://images.unsplash.com/photo-1467232004584-a241de8bcf5d",
         featuredImage: featuredImage.trim() || "https://images.unsplash.com/photo-1467232004584-a241de8bcf5d",
-        date: date.trim() || formatDate(new Date()),
+        date: displayDate,
         author: author.trim() || "Sumiraj",
         category,
         fontStyle,
         readingTime: readingTime.trim() || "5 min read",
         metaTitle: metaTitle.trim() || title.trim(),
         metaDescription: metaDescription.trim() || shortDescription.trim(),
-        isPublished,
+        isPublished: finalIsPublished,
+        scheduledAt: finalScheduledAt,
+        status: finalStatus,
       };
 
       let result;
@@ -949,18 +1081,190 @@ export function BlogFormModal({ isOpen, onClose, postToEdit, onSuccess }: BlogFo
               </div>
             </div>
 
-            {/* PUBLISHED SWITCH */}
-            <div className="sm:col-span-2 flex items-center gap-3 pt-2">
-              <input
-                type="checkbox"
-                id="isPublished"
-                checked={isPublished}
-                onChange={(e) => setIsPublished(e.target.checked)}
-                className="h-4 w-4 rounded border-slate-300 text-accent focus:ring-accent cursor-pointer"
-              />
-              <label htmlFor="isPublished" className="text-xs font-bold text-slate-800 cursor-pointer">
-                Publish Article Immediately (Visible on Public Website)
-              </label>
+            {/* PUBLICATION & SCHEDULING CARD */}
+            <div className="sm:col-span-2 rounded-xl border border-slate-200 p-4 bg-slate-50 space-y-3.5">
+              <div className="flex items-center justify-between border-b border-slate-200 pb-2">
+                <div className="flex items-center gap-2">
+                  <CalendarClock size={16} className="text-accent" />
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-800">
+                    Publication & Scheduling Options
+                  </h4>
+                </div>
+                <span className="text-[11px] font-semibold text-slate-500">
+                  Release Status
+                </span>
+              </div>
+
+              {/* 3 Status Selection Options */}
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                <label
+                  className={`relative flex flex-col p-3 rounded-lg border cursor-pointer transition-all ${
+                    publishStatus === "published"
+                      ? "bg-white border-accent ring-2 ring-accent/20 shadow-xs"
+                      : "bg-white/60 border-slate-200 hover:bg-white hover:border-slate-300"
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="publishStatus"
+                      value="published"
+                      checked={publishStatus === "published"}
+                      onChange={() => {
+                        setPublishStatus("published");
+                        setIsPublished(true);
+                      }}
+                      className="text-accent focus:ring-accent"
+                    />
+                    <span className="text-xs font-bold text-slate-900 flex items-center gap-1">
+                      <Send size={12} className="text-accent" /> Publish Now
+                    </span>
+                  </div>
+                  <p className="mt-1 text-[11px] text-slate-500 pl-5">
+                    Live on public site immediately
+                  </p>
+                </label>
+
+                <label
+                  className={`relative flex flex-col p-3 rounded-lg border cursor-pointer transition-all ${
+                    publishStatus === "scheduled"
+                      ? "bg-white border-indigo-500 ring-2 ring-indigo-500/20 shadow-xs"
+                      : "bg-white/60 border-slate-200 hover:bg-white hover:border-slate-300"
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="publishStatus"
+                      value="scheduled"
+                      checked={publishStatus === "scheduled"}
+                      onChange={() => {
+                        setPublishStatus("scheduled");
+                        setIsPublished(false);
+                        if (!scheduledDateTime) {
+                          const tmr = new Date();
+                          tmr.setDate(tmr.getDate() + 1);
+                          tmr.setHours(9, 0, 0, 0);
+                          const y = tmr.getFullYear();
+                          const m = String(tmr.getMonth() + 1).padStart(2, "0");
+                          const d = String(tmr.getDate()).padStart(2, "0");
+                          setScheduledDateTime(`${y}-${m}-${d}T09:00`);
+                        }
+                      }}
+                      className="text-indigo-600 focus:ring-indigo-500"
+                    />
+                    <span className="text-xs font-bold text-slate-900 flex items-center gap-1">
+                      <Clock size={12} className="text-indigo-600" /> Schedule for Later
+                    </span>
+                  </div>
+                  <p className="mt-1 text-[11px] text-slate-500 pl-5">
+                    Auto-publishes at future date & time
+                  </p>
+                </label>
+
+                <label
+                  className={`relative flex flex-col p-3 rounded-lg border cursor-pointer transition-all ${
+                    publishStatus === "draft"
+                      ? "bg-white border-amber-500 ring-2 ring-amber-500/20 shadow-xs"
+                      : "bg-white/60 border-slate-200 hover:bg-white hover:border-slate-300"
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="radio"
+                      name="publishStatus"
+                      value="draft"
+                      checked={publishStatus === "draft"}
+                      onChange={() => {
+                        setPublishStatus("draft");
+                        setIsPublished(false);
+                      }}
+                      className="text-amber-600 focus:ring-amber-500"
+                    />
+                    <span className="text-xs font-bold text-slate-900 flex items-center gap-1">
+                      <FileText size={12} className="text-amber-600" /> Save as Draft
+                    </span>
+                  </div>
+                  <p className="mt-1 text-[11px] text-slate-500 pl-5">
+                    Hidden from visitors, visible in admin
+                  </p>
+                </label>
+              </div>
+
+              {/* Expanded Scheduling Config (Visible when "Schedule for Later" is selected) */}
+              {publishStatus === "scheduled" && (
+                <div className="rounded-lg border border-indigo-200/80 bg-indigo-50/60 p-3.5 space-y-3 mt-1">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                    <div>
+                      <label className="block text-xs font-bold text-indigo-950 mb-0.5">
+                        Target Publication Date & Time *
+                      </label>
+                      <p className="text-[11px] text-indigo-800/80">
+                        Choose the scheduled release date and time.
+                      </p>
+                    </div>
+
+                    {/* Quick Shortcuts */}
+                    <div className="flex items-center gap-1.5 flex-wrap">
+                      <button
+                        type="button"
+                        onClick={() => applyScheduleShortcut(1)}
+                        className="rounded bg-white px-2 py-1 text-[10px] font-bold text-indigo-700 border border-indigo-200 hover:bg-indigo-100 transition shadow-2xs"
+                      >
+                        +1 Day (9 AM)
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => applyScheduleShortcut(3)}
+                        className="rounded bg-white px-2 py-1 text-[10px] font-bold text-indigo-700 border border-indigo-200 hover:bg-indigo-100 transition shadow-2xs"
+                      >
+                        +3 Days
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => applyScheduleShortcut(7)}
+                        className="rounded bg-white px-2 py-1 text-[10px] font-bold text-indigo-700 border border-indigo-200 hover:bg-indigo-100 transition shadow-2xs"
+                      >
+                        +1 Week
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="grid sm:grid-cols-2 gap-3 items-center">
+                    <div>
+                      <input
+                        type="datetime-local"
+                        value={scheduledDateTime}
+                        onChange={(e) => setScheduledDateTime(e.target.value)}
+                        className="w-full rounded-md border border-indigo-300 bg-white px-3 py-2 text-xs font-semibold text-slate-900 outline-none focus:border-indigo-600 focus:ring-2 focus:ring-indigo-500/20 shadow-xs"
+                      />
+                    </div>
+
+                    {/* Schedule Preview Pill */}
+                    {scheduleSummary && (
+                      <div
+                        className={`text-xs rounded-md px-3 py-2 border ${
+                          scheduleSummary.isPast
+                            ? "bg-amber-100/80 border-amber-300 text-amber-900"
+                            : "bg-white border-indigo-200 text-indigo-900"
+                        }`}
+                      >
+                        <div className="font-bold flex items-center gap-1.5">
+                          {scheduleSummary.isPast ? (
+                            <AlertCircle size={13} className="text-amber-600" />
+                          ) : (
+                            <Clock size={13} className="text-indigo-600" />
+                          )}
+                          {scheduleSummary.relative}
+                        </div>
+                        <div className="text-[11px] text-slate-600 mt-0.5">
+                          {scheduleSummary.formattedDate} at {scheduleSummary.formattedTime}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
 
@@ -975,16 +1279,36 @@ export function BlogFormModal({ isOpen, onClose, postToEdit, onSuccess }: BlogFo
             <button
               type="submit"
               disabled={isLoading}
-              className="rounded-md bg-accent px-5 py-2 text-xs font-bold text-white hover:brightness-110 transition shadow-md shadow-accent/15 flex items-center gap-1.5 disabled:opacity-50"
+              className={`rounded-md px-5 py-2 text-xs font-bold text-white transition shadow-md flex items-center gap-1.5 disabled:opacity-50 ${
+                publishStatus === "scheduled"
+                  ? "bg-indigo-600 hover:bg-indigo-700 shadow-indigo-600/20"
+                  : publishStatus === "draft"
+                  ? "bg-slate-700 hover:bg-slate-800 shadow-slate-700/20"
+                  : "bg-accent hover:brightness-110 shadow-accent/15"
+              }`}
             >
               {isLoading ? (
                 <>
                   <Loader2 size={14} className="animate-spin" /> Saving...
                 </>
+              ) : publishStatus === "scheduled" ? (
+                <>
+                  <CalendarClock size={14} />
+                  {isEditing ? "Update Scheduled Post" : "Schedule Blog Post"}
+                </>
+              ) : publishStatus === "draft" ? (
+                <>
+                  <FileText size={14} />
+                  {isEditing ? "Update Draft" : "Save as Draft"}
+                </>
               ) : isEditing ? (
-                "Update Article"
+                <>
+                  <CheckCircle2 size={14} /> Update Article
+                </>
               ) : (
-                "Publish Article"
+                <>
+                  <Send size={14} /> Publish Article
+                </>
               )}
             </button>
           </div>

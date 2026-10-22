@@ -2,7 +2,8 @@ import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 import { useMemo } from "react";
 import { Layout } from "@/components/site/Layout";
 import { BlogPost } from "@/lib/blogsData";
-import { useBlogPosts, getBlogPostBySlug } from "@/lib/blogsStore";
+import { useBlogPosts, getBlogPostBySlug, isPostPubliclyVisible, getPostStatus } from "@/lib/blogsStore";
+import { getAccessToken } from "@/lib/adminAuth";
 import { Calendar, Clock, User, ArrowLeft, ArrowRight, Phone, Mail, FileText, Share2 } from "lucide-react";
 
 export const Route = createFileRoute("/blog/$slug")({
@@ -400,6 +401,33 @@ function SingleBlogPost() {
     );
   }
 
+  const isPublic = isPostPubliclyVisible(post);
+  const isAdmin = Boolean(getAccessToken());
+
+  if (!isPublic && !isAdmin) {
+    const status = getPostStatus(post);
+    return (
+      <Layout>
+        <div className="container-x mx-auto py-24 text-center max-w-lg">
+          <div className="mx-auto w-12 h-12 rounded-full bg-indigo-50 border border-indigo-200 flex items-center justify-center text-indigo-600 mb-4">
+            <Clock size={24} />
+          </div>
+          <h1 className="text-2xl font-bold text-slate-900">
+            {status === "scheduled" ? "Article Scheduled" : "Article Not Available"}
+          </h1>
+          <p className="mt-3 text-sm text-slate-600">
+            {status === "scheduled" && post.scheduledAt
+              ? `This article is scheduled to be released on ${new Date(post.scheduledAt).toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" })} at ${new Date(post.scheduledAt).toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" })}.`
+              : "This article is currently not published."}
+          </p>
+          <Link to="/blog" className="mt-6 inline-flex items-center gap-2 rounded bg-accent px-5 py-2.5 text-xs font-semibold text-white hover:brightness-110 transition">
+            <ArrowLeft size={14} /> Back to Blog Listing
+          </Link>
+        </div>
+      </Layout>
+    );
+  }
+
   // Schema.org structured JSON-LD data
   const jsonLd = {
     "@context": "https://schema.org",
@@ -429,6 +457,16 @@ function SingleBlogPost() {
     <Layout>
       {/* Inject JSON-LD */}
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+
+      {/* Admin Scheduled / Draft Preview Banner */}
+      {!isPublic && (
+        <div className="bg-indigo-600 text-white text-xs py-2.5 px-4 text-center font-medium shadow-inner flex items-center justify-center gap-2">
+          <Clock size={14} />
+          <span>
+            <strong>Admin Preview Mode:</strong> This post is {getPostStatus(post) === "scheduled" && post.scheduledAt ? `scheduled for release on ${new Date(post.scheduledAt).toLocaleString()}` : "saved as a draft"} and is currently hidden from public visitors.
+          </span>
+        </div>
+      )}
 
       {/* Breadcrumb row & Quick Navigation */}
       <div className="bg-slate-50 border-b border-slate-100 py-4">

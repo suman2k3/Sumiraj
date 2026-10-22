@@ -9,6 +9,11 @@ import cncPlasmaImg from "@/assets/cnc-plasma-cutting-machine.png";
 import robotImg from "@/assets/img-robot.jpg";
 import welderImg from "@/assets/img-welder.jpg";
 import hbeamWeldingImg from "@/assets/hbeam-welding-line.png";
+import galleryCncPlasmaImg from "@/assets/gallery-cnc-plasma-cutting.jpg";
+import galleryFabricationImg from "@/assets/gallery-fabrication.jpg";
+import gallerySteelCuttingImg from "@/assets/gallery-steel-cutting.jpg";
+import galleryMezzanineTrussImg from "@/assets/gallery-mezzanine-truss.jpg";
+import qualityInspectionImg from "@/assets/quality-inspection-equipment.jpg";
 import { HardHat, ShieldAlert, Flame, Wrench, Timer, Ruler, Recycle, ShieldCheck, CalendarCheck, ChevronLeft, ChevronRight } from "lucide-react";
 
 export const Route = createFileRoute("/manufacturing")({
@@ -33,7 +38,7 @@ const manufacturingGallery = [
     category: "Steel Cutting",
     title: "Precision CNC Plasma Cutting",
     desc: "Automated high-definition plasma cutting of heavy steel plates.",
-    image: "https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?q=80&w=900&auto=format&fit=crop",
+    image: galleryCncPlasmaImg,
     alt: "CNC plasma cutting steel plate with sparks in manufacturing facility"
   },
   {
@@ -49,16 +54,16 @@ const manufacturingGallery = [
     category: "Fabrication",
     title: "Fabricated Frame Assembly",
     desc: "Precision fit-up and assembly of built-up steel rafters.",
-    image: "https://images.unsplash.com/photo-1581092335397-9583fe92d232?q=80&w=900&auto=format&fit=crop",
+    image: galleryFabricationImg,
     alt: "Engineers inspecting heavy steel structure fabrication"
   },
   {
     id: "g4",
     category: "Steel Cutting",
-    title: "Heavy Plate Shearing & Profiling",
-    desc: "High-speed laser and oxy-fuel cutting according to shop drawings.",
-    image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?q=80&w=900&auto=format&fit=crop",
-    alt: "Industrial steel cutting machine with laser precision"
+    title: "Heavy Plate & Section Cutting",
+    desc: "Automated high-capacity cutting and sectioning of structural steel.",
+    image: gallerySteelCuttingImg,
+    alt: "Industrial steel beam cutting and profiling machine"
   },
   {
     id: "g5",
@@ -81,7 +86,7 @@ const manufacturingGallery = [
     category: "Steel Cutting",
     title: "Band Saw Beam Sectioning",
     desc: "Automated high-capacity band saw cutting for hot-rolled sections.",
-    image: "https://images.unsplash.com/photo-1504917599217-d4dc5ebe6122?q=80&w=900&auto=format&fit=crop",
+    image: gallerySteelCuttingImg,
     alt: "Precision steel saw cutting I-beam section"
   },
   {
@@ -97,8 +102,8 @@ const manufacturingGallery = [
     category: "Fabrication",
     title: "Mezzanine & Truss Component Fabrication",
     desc: "Custom heavy truss framing built to exact architectural specifications.",
-    image: "https://images.unsplash.com/photo-1541888946425-d0fbb186a5b7?q=80&w=900&auto=format&fit=crop",
-    alt: "Structural steel truss alignment on shop floor"
+    image: galleryMezzanineTrussImg,
+    alt: "Mezzanine and truss component fabrication on shop floor"
   },
   {
     id: "g10",
@@ -256,8 +261,8 @@ function Manufacturing() {
               num: "05",
               title: "Quality Inspection Equipment",
               desc: "Inspection and measurement equipment used to verify fabrication quality and dimensional accuracy.",
-              img: "https://images.unsplash.com/photo-1581092335397-9583fe92d232?q=80&w=800&auto=format&fit=crop",
-              alt: "Quality inspection equipment used for fabrication inspection"
+              img: qualityInspectionImg,
+              alt: "Quality inspection engineer measuring structural steel flange with digital calipers"
             },
             {
               num: "06",

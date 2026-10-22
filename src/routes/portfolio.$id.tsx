@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { Layout } from "@/components/site/Layout";
 import { usePortfolioProjects, getPortfolioProjectById } from "@/lib/portfolioStore";
 import { 
@@ -9,6 +9,8 @@ import {
   Layers, 
   CheckCircle2, 
   Maximize2,
+  ChevronLeft,
+  ChevronRight,
   X
 } from "lucide-react";
 import { AnimatePresence } from "framer-motion";
@@ -53,8 +55,63 @@ function ProjectDetails() {
     ) || getPortfolioProjectById(id);
   }, [portfolioProjects, id]);
 
-  const [activeImage, setActiveImage] = useState<string>("");
+  const allImages = useMemo(() => {
+    if (!project) return [];
+    const list: string[] = [];
+    if (project.image) list.push(project.image);
+    if (Array.isArray(project.images)) {
+      project.images.forEach((img) => {
+        if (img && !list.includes(img)) list.push(img);
+      });
+    }
+    if (Array.isArray(project.gallery)) {
+      project.gallery.forEach((img) => {
+        if (img && !list.includes(img)) list.push(img);
+      });
+    }
+    return list.length > 0 ? list : (project.image ? [project.image] : []);
+  }, [project]);
+
+  const [currentIdx, setCurrentIdx] = useState<number>(0);
   const [lightboxOpen, setLightboxOpen] = useState<boolean>(false);
+
+  // Reset index when navigating to a different project
+  useEffect(() => {
+    setCurrentIdx(0);
+  }, [project?.id, project?._id]);
+
+  const displayedImage = allImages[currentIdx] || project?.image || "";
+
+  const handlePrev = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (allImages.length <= 1) return;
+    setCurrentIdx((prev) => (prev === 0 ? allImages.length - 1 : prev - 1));
+  };
+
+  const handleNext = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (allImages.length <= 1) return;
+    setCurrentIdx((prev) => (prev === allImages.length - 1 ? 0 : prev + 1));
+  };
+
+  // Keyboard navigation for image gallery & modal
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") {
+        if (allImages.length > 1) {
+          setCurrentIdx((prev) => (prev === 0 ? allImages.length - 1 : prev - 1));
+        }
+      } else if (e.key === "ArrowRight") {
+        if (allImages.length > 1) {
+          setCurrentIdx((prev) => (prev === allImages.length - 1 ? 0 : prev + 1));
+        }
+      } else if (e.key === "Escape" && lightboxOpen) {
+        setLightboxOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [allImages.length, lightboxOpen]);
 
   if (!project) {
     return (
@@ -70,7 +127,6 @@ function ProjectDetails() {
     );
   }
 
-  const displayedImage = activeImage || project.image;
   const buildingType = project.specifications?.industry || project.category || project.workType || "Industrial PEB";
   const projectArea = project.builtUpArea || project.specifications?.area || "N/A";
   const keyFeatures = project.shortDescription || (project.highlights && project.highlights.length > 0 ? project.highlights[0] : project.description);
@@ -106,32 +162,56 @@ function ProjectDetails() {
             
             {/* Left Column — Large Project Image (~60% -> lg:col-span-7) */}
             <div className="lg:col-span-7 flex flex-col space-y-3">
-              <div className="aspect-[4/3] w-full overflow-hidden rounded-xl bg-slate-950 border border-slate-200/90 shadow-sm relative group">
+              <div className="aspect-[4/3] w-full overflow-hidden rounded-xl bg-slate-950 border border-slate-200/90 shadow-sm relative group select-none">
                 <img 
                   src={displayedImage} 
-                  alt={project.title} 
-                  className="h-full w-full object-cover object-center" 
+                  alt={`${project.title} - view ${currentIdx + 1}`} 
+                  className="h-full w-full object-cover object-center transition-all duration-300" 
                 />
+
+                {/* Left/Right Navigation Arrows - ALWAYS VISIBLE */}
+                <button
+                  type="button"
+                  onClick={handlePrev}
+                  aria-label="Previous project image"
+                  className="absolute left-3 top-1/2 -translate-y-1/2 z-20 grid h-11 w-11 place-items-center rounded-full bg-slate-950/85 hover:bg-slate-950 text-white border border-white/30 shadow-2xl backdrop-blur-md transition-all hover:scale-110 active:scale-95 focus:outline-none cursor-pointer"
+                >
+                  <ChevronLeft size={24} />
+                </button>
+                <button
+                  type="button"
+                  onClick={handleNext}
+                  aria-label="Next project image"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 z-20 grid h-11 w-11 place-items-center rounded-full bg-slate-950/85 hover:bg-slate-950 text-white border border-white/30 shadow-2xl backdrop-blur-md transition-all hover:scale-110 active:scale-95 focus:outline-none cursor-pointer"
+                >
+                  <ChevronRight size={24} />
+                </button>
+                {/* Counter Badge */}
+                <div className="absolute top-3 left-3 z-20 rounded-md bg-slate-950/85 backdrop-blur-md px-2.5 py-1 text-[11px] font-bold text-white border border-white/20 shadow">
+                  {currentIdx + 1} / {allImages.length}
+                </div>
+
                 <button
                   onClick={() => setLightboxOpen(true)}
-                  className="absolute bottom-3 right-3 rounded-lg bg-slate-950/80 hover:bg-slate-950 px-3 py-1.5 text-[11px] font-bold text-white shadow backdrop-blur transition flex items-center gap-1.5 border border-white/10"
+                  className="absolute bottom-3 right-3 z-20 rounded-lg bg-slate-950/85 hover:bg-slate-950 px-3 py-1.5 text-[11px] font-bold text-white shadow-lg backdrop-blur transition flex items-center gap-1.5 border border-white/20 cursor-pointer"
                 >
                   <Maximize2 size={13} /> Fullscreen
                 </button>
               </div>
 
-              {/* Optional Small Gallery Thumbnails if multiple images exist */}
-              {project.gallery && project.gallery.length > 1 && (
-                <div className="flex gap-2 overflow-x-auto pb-1">
-                  {project.gallery.map((imgUrl, idx) => (
+              {/* Gallery Thumbnails Strip */}
+              {allImages.length > 1 && (
+                <div className="flex gap-2 overflow-x-auto pb-1 pt-0.5">
+                  {allImages.map((imgUrl, idx) => (
                     <button 
                       key={idx}
-                      onClick={() => setActiveImage(imgUrl)}
-                      className={`aspect-[16/10] w-20 rounded-lg overflow-hidden border-2 bg-slate-900 shrink-0 transition ${
-                        displayedImage === imgUrl ? "border-accent scale-95" : "border-slate-200 hover:border-slate-300"
+                      type="button"
+                      onClick={() => setCurrentIdx(idx)}
+                      className={`aspect-[16/10] w-20 sm:w-24 rounded-lg overflow-hidden border-2 bg-slate-900 shrink-0 transition cursor-pointer ${
+                        currentIdx === idx ? "border-accent ring-2 ring-accent/30 scale-95" : "border-slate-200 hover:border-slate-400 opacity-70 hover:opacity-100"
                       }`}
                     >
-                      <img src={imgUrl} alt="thumbnail" className="h-full w-full object-cover" />
+                      <img src={imgUrl} alt={`thumbnail ${idx + 1}`} className="h-full w-full object-cover" />
                     </button>
                   ))}
                 </div>
@@ -194,15 +274,51 @@ function ProjectDetails() {
       {/* Lightbox Modal for Fullscreen View */}
       <AnimatePresence>
         {lightboxOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-4 backdrop-blur-md">
+          <div 
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-4 backdrop-blur-md"
+            onClick={() => setLightboxOpen(false)}
+          >
+            {/* Close Button */}
             <button
               onClick={() => setLightboxOpen(false)}
-              className="absolute top-6 right-6 text-white bg-slate-800/80 p-3 rounded-full hover:bg-slate-700 transition"
+              className="absolute top-6 right-6 text-white bg-slate-800/80 p-3 rounded-full hover:bg-slate-700 transition z-30"
+              aria-label="Close fullscreen view"
             >
               <X size={22} />
             </button>
-            <div className="max-w-5xl max-h-[95vh] overflow-hidden rounded-xl">
-              <img src={displayedImage} alt={project.title} className="max-w-full max-h-[90vh] object-contain" />
+
+            {/* Left / Right Navigation in Lightbox - ALWAYS VISIBLE */}
+            <button
+              type="button"
+              onClick={handlePrev}
+              aria-label="Previous image"
+              className="absolute left-4 sm:left-8 top-1/2 -translate-y-1/2 z-30 grid h-12 w-12 sm:h-14 sm:w-14 place-items-center rounded-full bg-slate-900/85 hover:bg-slate-900 text-white border border-white/25 shadow-2xl backdrop-blur-md transition hover:scale-110 active:scale-95 cursor-pointer"
+            >
+              <ChevronLeft size={30} />
+            </button>
+            <button
+              type="button"
+              onClick={handleNext}
+              aria-label="Next image"
+              className="absolute right-4 sm:right-8 top-1/2 -translate-y-1/2 z-30 grid h-12 w-12 sm:h-14 sm:w-14 place-items-center rounded-full bg-slate-900/85 hover:bg-slate-900 text-white border border-white/25 shadow-2xl backdrop-blur-md transition hover:scale-110 active:scale-95 cursor-pointer"
+            >
+              <ChevronRight size={30} />
+            </button>
+
+            {/* Counter in Lightbox */}
+            <div className="absolute top-6 left-6 z-30 rounded-lg bg-slate-900/85 backdrop-blur-md px-3.5 py-1.5 text-xs font-bold text-white border border-white/15 shadow">
+              {currentIdx + 1} / {allImages.length}
+            </div>
+
+            <div 
+              className="max-w-5xl max-h-[95vh] overflow-hidden rounded-xl relative"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <img 
+                src={displayedImage} 
+                alt={project.title} 
+                className="max-w-full max-h-[90vh] object-contain select-none transition-all duration-300" 
+              />
             </div>
           </div>
         )}

@@ -50,6 +50,12 @@ export function PortfolioFormModal({
   const [thumbFileName, setThumbFileName] = useState("");
   const [imageTab, setImageTab] = useState<"upload" | "url">("upload");
 
+  // Multiple Gallery Images state
+  const [galleryImages, setGalleryImages] = useState<string[]>([]);
+  const [galleryTab, setGalleryTab] = useState<"upload" | "url">("upload");
+  const [newGalleryUrl, setNewGalleryUrl] = useState("");
+  const galleryFileInputRef = useRef<HTMLInputElement>(null);
+
   // UI status
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -83,6 +89,14 @@ export function PortfolioFormModal({
       setThumbnail(thumb);
       setThumbFileName(thumb.startsWith("data:") ? "Uploaded Image File" : "");
       setImageTab(thumb.startsWith("http") ? "url" : "upload");
+
+      const rawImgs = Array.isArray(projectToEdit.images) && projectToEdit.images.length > 0
+        ? projectToEdit.images
+        : Array.isArray(projectToEdit.gallery)
+        ? projectToEdit.gallery
+        : [];
+      setGalleryImages(rawImgs.filter((img) => img && img !== thumb));
+      setNewGalleryUrl("");
     } else {
       setTitle("");
       setSlug("");
@@ -95,6 +109,8 @@ export function PortfolioFormModal({
       setThumbnail("");
       setThumbFileName("");
       setImageTab("upload");
+      setGalleryImages([]);
+      setNewGalleryUrl("");
     }
     setError("");
     setImageError(false);
@@ -173,6 +189,38 @@ export function PortfolioFormModal({
     }
   };
 
+  const handleGalleryFilesChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (file.size > 10 * 1024 * 1024) continue;
+      try {
+        const compressed = await compressImageFile(file);
+        if (compressed) {
+          setGalleryImages((prev) => [...prev, compressed]);
+        }
+      } catch (err) {
+        console.error("Failed to compress gallery image", err);
+      }
+    }
+    if (galleryFileInputRef.current) {
+      galleryFileInputRef.current.value = "";
+    }
+  };
+
+  const handleAddGalleryUrl = () => {
+    if (newGalleryUrl.trim()) {
+      setGalleryImages((prev) => [...prev, newGalleryUrl.trim()]);
+      setNewGalleryUrl("");
+    }
+  };
+
+  const handleRemoveGalleryImage = (index: number) => {
+    setGalleryImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) {
@@ -184,6 +232,9 @@ export function PortfolioFormModal({
     setError("");
 
     try {
+      const allCombinedImages = [thumbnail.trim(), ...galleryImages.map((img) => img.trim())].filter(Boolean);
+      const primaryImage = thumbnail.trim() || allCombinedImages[0] || "https://sumiraj.com/public/portfolio/Jalkal_3.jpg";
+
       const projectData: Project = {
         _id: projectToEdit?._id,
         id: slug.trim() || generateSlug(title),
@@ -197,10 +248,10 @@ export function PortfolioFormModal({
         status: status.trim() || "Completed",
         shortDescription: `${workType.trim() || 'PEB Project'} completed${location.trim() ? ` at ${location.trim()}` : ' in India'}.`,
         description: `Turnkey ${category.trim() || 'Industrial'} project (${title.trim()})${workType.trim() ? ` involving ${workType.trim()}` : ''}${builtUpArea.trim() ? ` covering ${builtUpArea.trim()}` : ''}${location.trim() ? ` at ${location.trim()}` : ''}. Status: ${status.trim() || 'Completed'}.`,
-        image: thumbnail.trim() || "https://sumiraj.com/public/portfolio/Jalkal_3.jpg",
-        thumbnail: thumbnail.trim() || "https://sumiraj.com/public/portfolio/Jalkal_3.jpg",
-        gallery: [thumbnail.trim()],
-        images: [thumbnail.trim()],
+        image: primaryImage,
+        thumbnail: primaryImage,
+        gallery: allCombinedImages.length > 0 ? allCombinedImages : [primaryImage],
+        images: allCombinedImages.length > 0 ? allCombinedImages : [primaryImage],
         featured: true,
         isPublished: true,
         displayOrder: 1,
@@ -482,6 +533,109 @@ export function PortfolioFormModal({
                   </button>
                 </div>
               ) : null}
+            </div>
+
+            {/* 9. ADDITIONAL GALLERY IMAGES (MULTIPLE IMAGES) */}
+            <div className="sm:col-span-2 rounded-2xl border border-slate-200 p-4 bg-slate-50/80 space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-1.5">
+                    <ImageIcon size={16} className="text-accent" /> Additional Project Photos ({galleryImages.length})
+                  </label>
+                  <p className="text-[10px] text-slate-500 mt-0.5">
+                    Add multiple photos to navigate with left & right arrows on the project page.
+                  </p>
+                </div>
+
+                {/* Tab Switcher */}
+                <div className="flex bg-slate-200/80 p-0.5 rounded-lg text-[11px] font-semibold">
+                  <button
+                    type="button"
+                    onClick={() => setGalleryTab("upload")}
+                    className={`px-3 py-1 rounded-md transition ${
+                      galleryTab === "upload" ? "bg-white text-slate-900 shadow-sm" : "text-slate-600 hover:text-slate-900"
+                    }`}
+                  >
+                    Upload Files
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setGalleryTab("url")}
+                    className={`px-3 py-1 rounded-md transition ${
+                      galleryTab === "url" ? "bg-white text-slate-900 shadow-sm" : "text-slate-600 hover:text-slate-900"
+                    }`}
+                  >
+                    Image Link URL
+                  </button>
+                </div>
+              </div>
+
+              {galleryTab === "upload" ? (
+                <div>
+                  <input
+                    ref={galleryFileInputRef}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleGalleryFilesChange}
+                    className="hidden"
+                    id="portfolio-gallery-files"
+                  />
+                  <label
+                    htmlFor="portfolio-gallery-files"
+                    className="flex flex-col items-center justify-center p-4 border-2 border-dashed border-slate-300 hover:border-accent rounded-xl bg-white cursor-pointer transition text-center group"
+                  >
+                    <div className="h-8 w-8 rounded-full bg-accent/10 text-accent flex items-center justify-center mb-1 group-hover:scale-110 transition">
+                      <Upload size={16} />
+                    </div>
+                    <p className="text-xs font-bold text-slate-800">
+                      Click to select one or multiple images
+                    </p>
+                    <p className="text-[10px] text-slate-400 mt-0.5">
+                      Supports PNG, JPG, JPEG, WEBP (Max 10MB each)
+                    </p>
+                  </label>
+                </div>
+              ) : (
+                <div className="flex gap-2">
+                  <div className="relative flex-1">
+                    <input
+                      type="url"
+                      value={newGalleryUrl}
+                      onChange={(e) => setNewGalleryUrl(e.target.value)}
+                      placeholder="https://example.com/project-extra-view.jpg"
+                      className="w-full rounded-xl border border-slate-300 bg-white pl-9 pr-4 py-2 text-xs text-slate-900 font-mono outline-none focus:border-accent"
+                    />
+                    <LinkIcon className="absolute left-3 top-2.5 text-slate-400" size={14} />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleAddGalleryUrl}
+                    className="px-4 py-2 rounded-xl bg-accent text-white text-xs font-bold hover:brightness-110 transition shrink-0"
+                  >
+                    Add Photo
+                  </button>
+                </div>
+              )}
+
+              {/* GALLERY THUMBNAILS GRID */}
+              {galleryImages.length > 0 && (
+                <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 pt-2">
+                  {galleryImages.map((imgUrl, idx) => (
+                    <div key={idx} className="relative aspect-[4/3] rounded-lg overflow-hidden border border-slate-200 bg-slate-900 group">
+                      <img src={imgUrl} alt={`gallery ${idx + 1}`} className="h-full w-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => handleRemoveGalleryImage(idx)}
+                        className="absolute top-1.5 right-1.5 h-6 w-6 rounded-full bg-red-600/90 text-white flex items-center justify-center hover:bg-red-700 transition shadow"
+                        title="Delete photo"
+                      >
+                        <Trash2 size={12} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 

@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import React, { useState } from "react";
 import { useAdminAuth, UserProfile } from "@/lib/adminAuth";
-import { useBlogPosts, deleteBlogPost } from "@/lib/blogsStore";
+import { useBlogPosts, deleteBlogPost, getPostStatus } from "@/lib/blogsStore";
 import { usePortfolioProjects, deletePortfolioProject } from "@/lib/portfolioStore";
 import { BlogPost } from "@/lib/blogsData";
 import { Project } from "@/lib/portfolioData";
@@ -23,6 +23,8 @@ import {
   Loader2,
   CheckCircle2,
   Shield,
+  Clock,
+  CalendarClock,
 } from "lucide-react";
 import { Logo } from "@/components/site/Logo";
 
@@ -188,8 +190,14 @@ function AdminDashboard({ userProfile, logout }: AdminDashboardProps) {
   const [isPortfolioModalOpen, setIsPortfolioModalOpen] = useState(false);
   const [portfolioToEdit, setPortfolioToEdit] = useState<Project | null>(null);
 
-  // Search filter state
+  // Search & Status filter state
   const [searchQuery, setSearchQuery] = useState("");
+  const [blogStatusFilter, setBlogStatusFilter] = useState<"all" | "published" | "scheduled" | "draft">("all");
+
+  // Blog Status Counts
+  const publishedBlogsCount = blogPosts.filter((p) => getPostStatus(p) === "published").length;
+  const scheduledBlogsCount = blogPosts.filter((p) => getPostStatus(p) === "scheduled").length;
+  const draftBlogsCount = blogPosts.filter((p) => getPostStatus(p) === "draft").length;
 
   // Delete handlers
   const handleDeleteBlog = async (post: BlogPost) => {
@@ -207,12 +215,17 @@ function AdminDashboard({ userProfile, logout }: AdminDashboardProps) {
   };
 
   // Filtered lists
-  const filteredBlogs = blogPosts.filter(
-    (p) =>
+  const filteredBlogs = blogPosts.filter((p) => {
+    const status = getPostStatus(p);
+    if (blogStatusFilter !== "all" && status !== blogStatusFilter) {
+      return false;
+    }
+    return (
       p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
       p.slug.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+    );
+  });
 
   const filteredPortfolio = portfolioProjects.filter(
     (p) =>
@@ -298,6 +311,11 @@ function AdminDashboard({ userProfile, logout }: AdminDashboardProps) {
             <div>
               <p className="text-xs font-bold uppercase tracking-wider text-slate-400">Total Blog Articles</p>
               <h3 className="text-3xl font-extrabold text-white mt-1">{blogPosts.length}</h3>
+              <p className="text-[11px] text-slate-400 mt-1 font-medium">
+                <span className="text-emerald-400 font-bold">{publishedBlogsCount}</span> Live ·{" "}
+                <span className="text-indigo-400 font-bold">{scheduledBlogsCount}</span> Scheduled ·{" "}
+                <span className="text-amber-400 font-bold">{draftBlogsCount}</span> Drafts
+              </p>
             </div>
             <div className="h-12 w-12 rounded-xl bg-accent/10 border border-accent/20 flex items-center justify-center text-accent">
               <FileText size={24} />
@@ -388,14 +406,61 @@ function AdminDashboard({ userProfile, logout }: AdminDashboardProps) {
         {/* Tab 1: BLOGS MANAGEMENT */}
         {activeTab === "blogs" && (
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="font-display text-lg font-bold text-white">Blog Articles Listing</h3>
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              {/* Blog Status Filter Tabs */}
+              <div className="flex items-center gap-1.5 flex-wrap">
+                <button
+                  type="button"
+                  onClick={() => setBlogStatusFilter("all")}
+                  className={`rounded-lg px-3 py-1.5 text-xs font-bold transition ${
+                    blogStatusFilter === "all"
+                      ? "bg-slate-800 text-white border border-slate-700"
+                      : "text-slate-400 hover:text-white"
+                  }`}
+                >
+                  All ({blogPosts.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setBlogStatusFilter("published")}
+                  className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition ${
+                    blogStatusFilter === "published"
+                      ? "bg-emerald-950/80 text-emerald-300 border border-emerald-700/60 shadow-xs"
+                      : "text-slate-400 hover:text-emerald-400"
+                  }`}
+                >
+                  <CheckCircle2 size={12} /> Live ({publishedBlogsCount})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setBlogStatusFilter("scheduled")}
+                  className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition ${
+                    blogStatusFilter === "scheduled"
+                      ? "bg-indigo-950/80 text-indigo-300 border border-indigo-700/60 shadow-xs"
+                      : "text-slate-400 hover:text-indigo-400"
+                  }`}
+                >
+                  <Clock size={12} /> Scheduled ({scheduledBlogsCount})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setBlogStatusFilter("draft")}
+                  className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-bold transition ${
+                    blogStatusFilter === "draft"
+                      ? "bg-amber-950/80 text-amber-300 border border-amber-700/60 shadow-xs"
+                      : "text-slate-400 hover:text-amber-400"
+                  }`}
+                >
+                  <FileText size={12} /> Drafts ({draftBlogsCount})
+                </button>
+              </div>
+
               <button
                 onClick={() => {
                   setBlogToEdit(null);
                   setIsBlogModalOpen(true);
                 }}
-                className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2 text-xs font-bold text-white hover:brightness-110 transition shadow-md shadow-accent/15"
+                className="inline-flex items-center gap-1.5 rounded-lg bg-accent px-4 py-2 text-xs font-bold text-white hover:brightness-110 transition shadow-md shadow-accent/15 shrink-0"
               >
                 <Plus size={16} /> Create New Article
               </button>
@@ -407,6 +472,7 @@ function AdminDashboard({ userProfile, logout }: AdminDashboardProps) {
                   <tr>
                     <th className="px-6 py-4">Article Title</th>
                     <th className="px-6 py-4">Category</th>
+                    <th className="px-6 py-4">Status</th>
                     <th className="px-6 py-4">Date</th>
                     <th className="px-6 py-4">Reading Time</th>
                     <th className="px-6 py-4 text-right">Actions</th>
@@ -415,53 +481,79 @@ function AdminDashboard({ userProfile, logout }: AdminDashboardProps) {
                 <tbody className="divide-y divide-slate-800/60">
                   {filteredBlogs.length === 0 ? (
                     <tr>
-                      <td colSpan={5} className="px-6 py-8 text-center text-slate-500">
-                        No blog articles found.
+                      <td colSpan={6} className="px-6 py-8 text-center text-slate-500">
+                        No blog articles found matching the current filter.
                       </td>
                     </tr>
                   ) : (
-                    filteredBlogs.map((post) => (
-                      <tr key={post.slug} className="hover:bg-slate-900/40 transition">
-                        <td className="px-6 py-4">
-                          <div className="font-bold text-white">{post.title}</div>
-                          <div className="text-[11px] font-mono text-slate-500 mt-0.5">/{post.slug}</div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className="rounded bg-accent/15 px-2.5 py-1 text-[10px] font-bold text-accent border border-accent/20">
-                            {post.category}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 text-slate-300">{post.date}</td>
-                        <td className="px-6 py-4 text-slate-400">{post.readingTime}</td>
-                        <td className="px-6 py-4 text-right space-x-2">
-                          <Link
-                            to={`/blog/${post.slug}`}
-                            target="_blank"
-                            className="inline-flex p-1.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition"
-                            title="View Public Post"
-                          >
-                            <ExternalLink size={14} />
-                          </Link>
-                          <button
-                            onClick={() => {
-                              setBlogToEdit(post);
-                              setIsBlogModalOpen(true);
-                            }}
-                            className="inline-flex p-1.5 rounded bg-blue-950/60 hover:bg-blue-900/80 text-blue-300 transition border border-blue-800/50"
-                            title="Edit Post"
-                          >
-                            <Edit size={14} />
-                          </button>
-                          <button
-                            onClick={() => handleDeleteBlog(post)}
-                            className="inline-flex p-1.5 rounded bg-red-950/60 hover:bg-red-900/80 text-red-300 transition border border-red-800/50"
-                            title="Delete Post"
-                          >
-                            <Trash2 size={14} />
-                          </button>
-                        </td>
-                      </tr>
-                    ))
+                    filteredBlogs.map((post) => {
+                      const postStatus = getPostStatus(post);
+                      const schedDate = post.scheduledAt ? new Date(post.scheduledAt) : null;
+                      return (
+                        <tr key={post._id || post.slug} className="hover:bg-slate-900/40 transition">
+                          <td className="px-6 py-4">
+                            <div className="font-bold text-white">{post.title}</div>
+                            <div className="text-[11px] font-mono text-slate-500 mt-0.5">/{post.slug}</div>
+                          </td>
+                          <td className="px-6 py-4">
+                            <span className="rounded bg-accent/15 px-2.5 py-1 text-[10px] font-bold text-accent border border-accent/20">
+                              {post.category}
+                            </span>
+                          </td>
+                          <td className="px-6 py-4">
+                            {postStatus === "scheduled" ? (
+                              <div className="flex flex-col gap-1 items-start">
+                                <span className="inline-flex items-center gap-1 rounded bg-indigo-500/15 px-2.5 py-0.5 text-[10px] font-bold text-indigo-300 border border-indigo-500/30">
+                                  <Clock size={11} /> Scheduled
+                                </span>
+                                {schedDate && !isNaN(schedDate.getTime()) && (
+                                  <span className="text-[10px] text-indigo-300/80 font-mono">
+                                    {schedDate.toLocaleDateString("en-US", { month: "short", day: "numeric" })} at {schedDate.toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit", hour12: true })}
+                                  </span>
+                                )}
+                              </div>
+                            ) : postStatus === "draft" ? (
+                              <span className="inline-flex items-center gap-1 rounded bg-amber-500/15 px-2.5 py-0.5 text-[10px] font-bold text-amber-300 border border-amber-500/30">
+                                <FileText size={11} /> Draft
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 rounded bg-emerald-500/15 px-2.5 py-0.5 text-[10px] font-bold text-emerald-300 border border-emerald-500/30">
+                                <CheckCircle2 size={11} /> Live
+                              </span>
+                            )}
+                          </td>
+                          <td className="px-6 py-4 text-slate-300">{post.date}</td>
+                          <td className="px-6 py-4 text-slate-400">{post.readingTime}</td>
+                          <td className="px-6 py-4 text-right space-x-2">
+                            <Link
+                              to={`/blog/${post.slug}`}
+                              target="_blank"
+                              className="inline-flex p-1.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white transition"
+                              title="View Public Post"
+                            >
+                              <ExternalLink size={14} />
+                            </Link>
+                            <button
+                              onClick={() => {
+                                setBlogToEdit(post);
+                                setIsBlogModalOpen(true);
+                              }}
+                              className="inline-flex p-1.5 rounded bg-blue-950/60 hover:bg-blue-900/80 text-blue-300 transition border border-blue-800/50"
+                              title="Edit Post"
+                            >
+                              <Edit size={14} />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteBlog(post)}
+                              className="inline-flex p-1.5 rounded bg-red-950/60 hover:bg-red-900/80 text-red-300 transition border border-red-800/50"
+                              title="Delete Post"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })
                   )}
                 </tbody>
               </table>

@@ -3,11 +3,11 @@ import { Layout } from "@/components/site/Layout";
 import { PageHero } from "@/components/site/PageHero";
 import heroImg from "@/assets/hero-about.jpg";
 import teamImg from "@/assets/img-team.jpg";
-import pebImg from "@/assets/hero-peb-system.jpg";
-import primaryFramingImg from "@/assets/hero-primary-framing.jpg";
-import warehouseImg from "@/assets/img-warehouse.jpg";
-import cncImg from "@/assets/img-cnc.jpg";
-import secondaryFramingImg from "@/assets/hero-secondary-framing.jpg";
+import aboutOfferingPebImg from "@/assets/about-offering-peb.jpg";
+import aboutOfferingIndustrialShedsImg from "@/assets/about-offering-industrial-sheds.jpg";
+import aboutOfferingWarehousesImg from "@/assets/about-offering-warehouses.jpg";
+import aboutOfferingFactoryBuildingsImg from "@/assets/about-offering-factory-buildings.jpg";
+import aboutOfferingCustomSteelImg from "@/assets/about-offering-custom-steel-structures.jpg";
 import { Target, Eye, Award, Users, Factory, TrendingUp, HardHat, Layers, Ruler, Clock, ShieldCheck, Building2, Boxes } from "lucide-react";
 
 export const Route = createFileRoute("/about")({
@@ -31,35 +31,35 @@ const whatWeDoOfferings = [
     step: "01",
     title: "Pre-Engineered Buildings",
     desc: "Engineered steel building solutions designed for industrial, commercial, and infrastructure requirements.",
-    image: pebImg,
+    image: aboutOfferingPebImg,
     alt: "Pre-Engineered Buildings",
   },
   {
     step: "02",
     title: "Industrial Sheds",
     desc: "Functional steel sheds designed to support industrial operations, production activities, and covered workspaces.",
-    image: primaryFramingImg,
+    image: aboutOfferingIndustrialShedsImg,
     alt: "Industrial Sheds",
   },
   {
     step: "03",
     title: "Warehouses",
     desc: "Steel warehouse structures designed to support storage, logistics, and efficient material movement.",
-    image: warehouseImg,
+    image: aboutOfferingWarehousesImg,
     alt: "Warehouses",
   },
   {
     step: "04",
     title: "Factory Buildings",
     desc: "Purpose-designed industrial buildings planned around operational requirements, workflow, and production space.",
-    image: cncImg,
+    image: aboutOfferingFactoryBuildingsImg,
     alt: "Factory Buildings",
   },
   {
     step: "05",
     title: "Custom Steel Structures",
     desc: "Customized structural steel solutions developed to meet specific project designs and engineering requirements.",
-    image: secondaryFramingImg,
+    image: aboutOfferingCustomSteelImg,
     alt: "Custom Steel Structures",
   },
 ];
@@ -70,7 +70,7 @@ const timeline = [
   { year: "2021", title: "Growing Across Industries", text: "Successfully completed projects across multiple industrial sectors, strengthening our experience and execution capabilities." },
   { year: "2023", title: "Building Turnkey Capabilities", text: "Strengthened turnkey capabilities covering design, manufacturing, and erection, enabling more comprehensive project execution." },
   { year: "2025", title: "Expanding Our Manufacturing Footprint", text: "Expanded manufacturing operations with facilities in Greater Noida and Hapur, strengthening production capacity and operational reach." },
-  { year: "2026", title: "200+ Projects and Counting", text: "Reached 200+ completed projects, serving industrial clients across India." },
+  { year: "2026", title: "300+ Projects and Counting", text: "Reached 300+ completed projects, serving industrial clients across India." },
 ];
 
 interface Leader {
@@ -84,6 +84,7 @@ const leaders: Leader[] = [
   { name: "Mr Pradeep Kumar", role: "GM" },
   { name: "Mr Devendra Kumar", role: "Sales & Marketing Manager" },
   { name: "Mr Alok Ranjan", role: "Project Manager" },
+  { name: "Mr. Ravindra Saini", role: "Design Manager" },
 ];
 
 function About() {
@@ -309,7 +310,7 @@ function About() {
           <p className="eyebrow justify-center">Our History</p>
           <h2 className="mt-3 font-display text-4xl font-bold md:text-5xl">Engineering Excellence. Built to Last.</h2>
           <p className="mt-4 text-base sm:text-lg text-slate-600 leading-relaxed">
-            From our foundation in 2017 to delivering 200+ projects across India, Sumiraj has grown with a clear focus on engineering excellence, quality, and reliable execution.
+            From our foundation in 2017 to delivering 300+ projects across India, Sumiraj has grown with a clear focus on engineering excellence, quality, and reliable execution.
           </p>
         </div>
         <div className="relative mt-16">
@@ -335,15 +336,15 @@ function About() {
             <p className="eyebrow">Leadership</p>
             <h2 className="mt-3 font-display text-4xl font-bold md:text-5xl">The people setting the standard.</h2>
           </div>
-          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-14 grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
             {leaders.map((l) => (
-              <div key={l.name} className="rounded-sm bg-card p-6">
-                <div className="mb-6 grid h-28 w-28 place-items-center rounded-full bg-[var(--steel-dark)] font-display text-3xl font-bold text-accent">
-                  {l.name.split(" ").map((n) => n[0]).join("")}
+              <div key={l.name} className="rounded-sm bg-card p-4 sm:p-5 lg:p-4 xl:p-6 flex flex-col justify-start">
+                <div className="mb-6 grid h-24 w-24 xl:h-28 xl:w-28 place-items-center rounded-full bg-[var(--steel-dark)] font-display text-2xl xl:text-3xl font-bold text-accent">
+                  {l.name.replace(/\./g, "").split(" ").map((n) => n[0]).join("")}
                 </div>
-                <div className="font-display text-lg font-bold">{l.name}</div>
-                <div className="mt-1 text-sm text-accent">{l.role}</div>
-                <div className="mt-2 text-sm text-muted-foreground">{l.note}</div>
+                <div className="font-display text-base xl:text-lg font-bold text-slate-900 leading-snug">{l.name}</div>
+                <div className="mt-1 text-xs xl:text-sm text-accent font-semibold">{l.role}</div>
+                {l.note && <div className="mt-2 text-xs xl:text-sm text-muted-foreground">{l.note}</div>}
               </div>
             ))}
           </div>

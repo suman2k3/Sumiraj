@@ -1,8 +1,9 @@
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import manufacturingPlantsImg from "@/assets/industry-manufacturing-plants.jpg";
-import warehouseImg from "@/assets/img-warehouse.jpg";
+import warehousesIndustryImg from "@/assets/industry-warehouses.jpg";
 import logisticsImg from "@/assets/hero-home-3.jpg";
+import cementIndustryImg from "@/assets/industry-cement.jpg";
 
 interface IndustryItem {
   id: string;
@@ -21,8 +22,8 @@ const row1Industries: IndustryItem[] = [
   {
     id: "warehouses",
     title: "Warehouses",
-    image: warehouseImg,
-    alt: "Industrial warehouse building",
+    image: warehousesIndustryImg,
+    alt: "Industrial steel frame warehouse and logistics facility with overhead cranes",
   },
   {
     id: "logistics",
@@ -36,8 +37,8 @@ const row2Industries: IndustryItem[] = [
   {
     id: "cement-industries",
     title: "Cement Industries",
-    image: "https://images.unsplash.com/photo-1541888946425-d0fbb186a5b7?q=80&w=800&auto=format&fit=crop",
-    alt: "Cement industry facility",
+    image: cementIndustryImg,
+    alt: "Cement industry facility with rotary kiln and silos at sunset",
   },
   {
     id: "food-processing",

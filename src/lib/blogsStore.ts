@@ -34,8 +34,29 @@ function generateSlug(title: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
+export function getPostStatus(post: { isPublished?: boolean; scheduledAt?: string; status?: "published" | "scheduled" | "draft" }): "published" | "scheduled" | "draft" {
+  if (post.status === "draft") return "draft";
+  if (post.scheduledAt) {
+    const schedDate = new Date(post.scheduledAt);
+    if (!isNaN(schedDate.getTime()) && schedDate.getTime() > Date.now()) {
+      return "scheduled";
+    }
+  }
+  if (post.isPublished === false) {
+    return "draft";
+  }
+  return "published";
+}
+
+export function isPostPubliclyVisible(post: BlogPost): boolean {
+  return getPostStatus(post) === "published";
+}
+
 export function normalizeBlogPost(raw: any): BlogPost {
   const image = raw.featuredImage || raw.image || "https://sumiraj.com/public/blogs/top-benefits-of-pre-engineered-buildings-sumiraj_webp.png";
+  const scheduledAt = raw.scheduledAt || undefined;
+  const status = raw.status || getPostStatus({ isPublished: raw.isPublished, scheduledAt, status: raw.status });
+
   return {
     _id: raw._id,
     slug: raw.slug || generateSlug(raw.title || "untitled"),
@@ -51,6 +72,8 @@ export function normalizeBlogPost(raw: any): BlogPost {
     metaTitle: raw.metaTitle || raw.title || "",
     metaDescription: raw.metaDescription || raw.shortDescription || "",
     isPublished: raw.isPublished ?? true,
+    scheduledAt,
+    status,
     fontStyle: raw.fontStyle || "Inter (Sans-Serif)",
     createdAt: raw.createdAt,
     updatedAt: raw.updatedAt,
@@ -178,6 +201,8 @@ export async function addBlogPost(post: BlogPost): Promise<{ success: boolean; m
     category: post.category,
     fontStyle: post.fontStyle,
     isPublished: post.isPublished ?? true,
+    scheduledAt: post.scheduledAt,
+    status: post.status,
   };
 
   const controller = new AbortController();
@@ -246,6 +271,8 @@ export async function updateBlogPost(targetIdentifier: string, updatedPost: Blog
     category: updatedPost.category,
     fontStyle: updatedPost.fontStyle,
     isPublished: updatedPost.isPublished ?? true,
+    scheduledAt: updatedPost.scheduledAt,
+    status: updatedPost.status,
   };
 
   const controller = new AbortController();

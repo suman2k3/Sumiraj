@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useMemo } from "react";
 import { Layout } from "@/components/site/Layout";
 import { PageHero } from "@/components/site/PageHero";
-import { useBlogPosts } from "@/lib/blogsStore";
+import { useBlogPosts, isPostPubliclyVisible } from "@/lib/blogsStore";
 import heroImg from "@/assets/hero-gallery.jpg"; // Using a beautiful existing industrial hero asset
 import { Search, Calendar, Clock, ArrowRight, Mail, Sparkles, Filter } from "lucide-react";
 
@@ -35,7 +35,9 @@ function BlogListing() {
 
   // Generate excerpts for the listing cards
   const postsWithExcerpts = useMemo(() => {
-    return blogPosts.map(post => {
+    return blogPosts
+      .filter(isPostPubliclyVisible)
+      .map(post => {
       // Find the first paragraph or clean section to create an excerpt
       const cleanContent = post.content
         .replace(/[#*`\-]/g, "") // remove markdown syntax

@@ -15,7 +15,9 @@ import {
   List, 
   SlidersHorizontal, 
   HardHat,
-  X
+  X,
+  ChevronLeft,
+  ChevronRight
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -34,6 +36,90 @@ export const Route = createFileRoute("/portfolio/")({
   }),
   component: PortfolioListing,
 });
+
+function ProjectCardImage({ 
+  project, 
+  projectSlug, 
+  className = "aspect-[16/9] w-full rounded-t-xl" 
+}: { 
+  project: any; 
+  projectSlug: string; 
+  className?: string;
+}) {
+  const allImages = useMemo(() => {
+    const list: string[] = [];
+    if (project.image) list.push(project.image);
+    if (Array.isArray(project.images)) {
+      project.images.forEach((img: string) => {
+        if (img && !list.includes(img)) list.push(img);
+      });
+    }
+    if (Array.isArray(project.gallery)) {
+      project.gallery.forEach((img: string) => {
+        if (img && !list.includes(img)) list.push(img);
+      });
+    }
+    return list.length > 0 ? list : (project.image ? [project.image] : []);
+  }, [project]);
+
+  const [currentIdx, setCurrentIdx] = useState(0);
+
+  const handlePrev = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (allImages.length <= 1) return;
+    setCurrentIdx((prev) => (prev === 0 ? allImages.length - 1 : prev - 1));
+  };
+
+  const handleNext = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (allImages.length <= 1) return;
+    setCurrentIdx((prev) => (prev === allImages.length - 1 ? 0 : prev + 1));
+  };
+
+  return (
+    <div className={`relative overflow-hidden bg-slate-950 group/img select-none ${className}`}>
+      <Link 
+        to="/portfolio/$id" 
+        params={{ id: projectSlug }}
+        className="block h-full w-full cursor-pointer"
+      >
+        <img 
+          src={allImages[currentIdx] || project.image} 
+          alt={`${project.title} - view ${currentIdx + 1}`} 
+          className="h-full w-full object-cover object-center transition-transform duration-500 group-hover/img:scale-105"
+          loading="lazy"
+        />
+      </Link>
+
+      {/* Left Arrow - ALWAYS VISIBLE */}
+      <button
+        type="button"
+        onClick={handlePrev}
+        aria-label="Previous project image"
+        className="absolute left-2.5 top-1/2 -translate-y-1/2 z-10 grid h-8 w-8 place-items-center rounded-full bg-slate-950/85 hover:bg-slate-950 text-white border border-white/20 shadow-md backdrop-blur-sm opacity-90 sm:opacity-90 sm:hover:opacity-100 transition-all hover:scale-110 active:scale-95 cursor-pointer"
+      >
+        <ChevronLeft size={16} />
+      </button>
+
+      {/* Right Arrow - ALWAYS VISIBLE */}
+      <button
+        type="button"
+        onClick={handleNext}
+        aria-label="Next project image"
+        className="absolute right-2.5 top-1/2 -translate-y-1/2 z-10 grid h-8 w-8 place-items-center rounded-full bg-slate-950/85 hover:bg-slate-950 text-white border border-white/20 shadow-md backdrop-blur-sm opacity-90 sm:opacity-90 sm:hover:opacity-100 transition-all hover:scale-110 active:scale-95 cursor-pointer"
+      >
+        <ChevronRight size={16} />
+      </button>
+
+      {/* Image Counter Badge */}
+      <div className="absolute top-2.5 left-2.5 z-10 rounded-md bg-slate-950/85 backdrop-blur-md px-2 py-0.5 text-[10px] font-bold text-white border border-white/10 shadow pointer-events-none">
+        {currentIdx + 1} / {allImages.length}
+      </div>
+    </div>
+  );
+}
 
 function PortfolioListing() {
   const portfolioProjects = usePortfolioProjects();
@@ -202,19 +288,12 @@ function PortfolioListing() {
                     key={project.id}
                     className="group flex flex-col overflow-hidden rounded-2xl bg-white border border-slate-200/90 shadow-sm hover:shadow-xl hover:border-slate-300 transition-all duration-300 relative border-t-4 border-t-accent"
                   >
-                    {/* Image Link Frame */}
-                    <Link 
-                      to="/portfolio/$id" 
-                      params={{ id: projectSlug }}
-                      className="aspect-[16/9] w-full bg-slate-950 flex items-center justify-center relative overflow-hidden rounded-t-xl border-b border-slate-800 block cursor-pointer"
-                    >
-                      <img 
-                        src={project.image} 
-                        alt={project.title} 
-                        className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105"
-                        loading="lazy"
-                      />
-                    </Link>
+                    {/* Image Link Frame with Navigation Arrows for Multiple Images */}
+                    <ProjectCardImage 
+                      project={project} 
+                      projectSlug={projectSlug} 
+                      className="aspect-[16/9] w-full rounded-t-xl border-b border-slate-800"
+                    />
 
                     {/* Card Body */}
                     <div className="p-5 flex flex-col justify-between flex-1 bg-white space-y-4">
@@ -267,13 +346,12 @@ function PortfolioListing() {
                     key={project.id}
                     className="group flex flex-col md:flex-row items-center rounded-2xl bg-white border border-slate-200 shadow-sm hover:shadow-lg transition p-4 md:p-5 gap-6 border-l-4 border-l-accent"
                   >
-                    <Link 
-                      to="/portfolio/$id" 
-                      params={{ id: projectSlug }}
-                      className="w-full md:w-64 aspect-[16/9] rounded-xl overflow-hidden relative bg-slate-950 shrink-0 flex items-center justify-center block cursor-pointer"
-                    >
-                      <img src={project.image} alt={project.title} className="h-full w-full object-cover object-center transition-transform duration-500 group-hover:scale-105" />
-                    </Link>
+                    {/* Image Frame with Navigation Arrows for Multiple Images */}
+                    <ProjectCardImage 
+                      project={project} 
+                      projectSlug={projectSlug} 
+                      className="w-full md:w-64 aspect-[16/9] rounded-xl shrink-0"
+                    />
 
                     <div className="flex-1 min-w-0 space-y-2">
                       <div className="flex items-center justify-between gap-3">

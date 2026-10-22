@@ -15,15 +15,18 @@ import {
   Ruler,
   CheckCircle2,
   ChevronRight,
-  HardHat,
   Columns,
   Layers,
   Sparkles,
   Zap,
+  Calendar,
   Clock,
+  MapPin,
   Coins,
   Users
 } from "lucide-react";
+import { useBlogPosts, isPostPubliclyVisible } from "@/lib/blogsStore";
+import { usePortfolioProjects } from "@/lib/portfolioStore";
 import teamImg from "@/assets/img-team.jpg";
 import img1 from "@/assets/img1.jpg";
 import img2 from "@/assets/img2.jpg";
@@ -164,6 +167,10 @@ function CompanyLogo({ company }: { company: ClientCompany }) {
 
 function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const blogs = useBlogPosts();
+  const recentBlogs = blogs.filter(isPostPubliclyVisible).slice(0, 3);
+  const portfolioProjects = usePortfolioProjects();
+  const recentProjects = portfolioProjects.slice(0, 3);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -530,54 +537,170 @@ Every Sumiraj Pre-Engineered Building is designed as an integrated structural sy
         </div>
       </section>
 
-      {/* Why Choose Us Section */}
-      <section className="container-x mx-auto max-w-[1400px] py-12 sm:py-16 md:py-20">
-        <div className="grid gap-3 md:grid-cols-2 md:items-end">
-          <div>
-            <p className="eyebrow">Why Sumiraj</p>
-            <h2 className="mt-3 font-display text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900">Why Leading Businesses Choose Sumiraj</h2>
-          </div>
-          <p className="text-slate-600 md:text-right max-w-md ml-auto">From precision engineering and advanced manufacturing to timely project delivery, Sumiraj provides end-to-end Pre-Engineered Building (PEB) solutions backed by quality, innovation, and decades of industry expertise.</p>
-        </div>
-        <div className="mt-10 sm:mt-14 grid gap-px overflow-hidden rounded-xl border bg-slate-200 sm:grid-cols-2 lg:grid-cols-3">
-          {[
-            {
-              icon: HardHat,
-              title: "Engineering Expertise",
-              desc: "Experienced engineers deliver technically sound PEB solutions with a focus on structural performance, efficiency, and project requirements."
-            },
-            {
-              icon: Layers,
-              title: "Quality Material",
-              desc: "We use quality steel and approved construction materials selected for strength, durability, and consistent structural performance."
-            },
-            {
-              icon: Ruler,
-              title: "Customized Design",
-              desc: "Every building is designed according to its specific dimensions, usage, loading requirements, site conditions, and operational needs."
-            },
-            {
-              icon: Clock,
-              title: "Timely Delivery",
-              desc: "Planned engineering, fabrication, and project coordination help ensure materials and structures are delivered according to the agreed project schedule."
-            },
-            {
-              icon: Users,
-              title: "Technical Support",
-              desc: "Our technical team provides support throughout design, fabrication, erection, and project completion to address technical requirements effectively."
-            },
-            {
-              icon: ShieldCheck,
-              title: "Compliance with Indian Standards",
-              desc: "Our designs and engineering processes follow applicable Indian Standards and relevant structural and construction requirements."
-            }
-          ].map((f) => (
-            <div key={f.title} className="group bg-white p-6 sm:p-8 transition hover:bg-accent hover:text-white flex flex-col justify-start">
-              <f.icon size={32} className="text-accent transition group-hover:text-white shrink-0" />
-              <h3 className="mt-6 font-display text-lg font-bold text-slate-900 group-hover:text-white">{f.title}</h3>
-              <p className="mt-2 text-sm text-slate-600 transition group-hover:text-white/90 leading-relaxed">{f.desc}</p>
+      {/* Recent Blogs Section */}
+      <section className="bg-white py-12 sm:py-16 md:py-20 border-b border-slate-200/60">
+        <div className="container-x mx-auto max-w-[1400px]">
+          <div className="flex flex-wrap items-end justify-between gap-6 mb-12">
+            <div>
+              <p className="eyebrow">Industry Insights</p>
+              <h2 className="mt-3 font-display text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900">
+                Latest from Our Engineering Blog
+              </h2>
+              <p className="mt-3 text-slate-600 text-sm sm:text-base max-w-2xl leading-relaxed">
+                Technical guides, structural engineering insights, and industry updates from our pre-engineered building specialists.
+              </p>
             </div>
-          ))}
+            <Link
+              to="/blog"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-accent hover:text-orange-600 transition duration-300 shrink-0"
+            >
+              View all articles <ArrowRight size={16} />
+            </Link>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {recentBlogs.map((post) => (
+              <article
+                key={post.slug}
+                className="group flex flex-col overflow-hidden rounded-xl bg-white border border-slate-200/90 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-300"
+              >
+                <Link
+                  to="/blog/$slug"
+                  params={{ slug: post.slug }}
+                  className="aspect-[16/10] overflow-hidden bg-slate-950 block relative"
+                >
+                  <img
+                    src={post.image || post.featuredImage}
+                    alt={post.title}
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                  {post.category && (
+                    <span className="absolute top-3 left-3 rounded-md bg-slate-950/80 backdrop-blur-sm px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-accent border border-white/10">
+                      {post.category}
+                    </span>
+                  )}
+                </Link>
+                <div className="p-6 flex flex-col flex-1">
+                  <div className="flex items-center gap-2 text-xs font-semibold text-slate-400 mb-2.5">
+                    {post.date && (
+                      <span className="flex items-center gap-1">
+                        <Calendar size={13} className="text-accent" /> {post.date}
+                      </span>
+                    )}
+                    {post.readingTime && (
+                      <>
+                        <span>•</span>
+                        <span className="flex items-center gap-1">
+                          <Clock size={13} /> {post.readingTime}
+                        </span>
+                      </>
+                    )}
+                  </div>
+                  <h3 className="font-display text-lg font-bold leading-snug text-slate-900 group-hover:text-accent transition duration-300 line-clamp-2">
+                    <Link to="/blog/$slug" params={{ slug: post.slug }}>
+                      {post.title}
+                    </Link>
+                  </h3>
+                  <p className="mt-2.5 text-xs sm:text-sm text-slate-600 line-clamp-3 leading-relaxed flex-1">
+                    {post.shortDescription || (post.content ? post.content.replace(/<[^>]*>/g, "").substring(0, 140) + "..." : "")}
+                  </p>
+                  <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between">
+                    <Link
+                      to="/blog/$slug"
+                      params={{ slug: post.slug }}
+                      className="inline-flex items-center gap-1.5 text-xs font-bold text-accent hover:text-orange-600 transition duration-300"
+                    >
+                      Read Article <ArrowRight size={13} className="transition-transform group-hover:translate-x-1" />
+                    </Link>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Recent Portfolio Projects Section */}
+      <section className="bg-slate-50 py-12 sm:py-16 md:py-20 border-b border-slate-200/60">
+        <div className="container-x mx-auto max-w-[1400px]">
+          <div className="flex flex-wrap items-end justify-between gap-6 mb-12">
+            <div>
+              <p className="eyebrow">Our Projects</p>
+              <h2 className="mt-3 font-display text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900">
+                Featured Turnkey PEB Projects
+              </h2>
+              <p className="mt-3 text-slate-600 text-sm sm:text-base max-w-2xl leading-relaxed">
+                Explore our landmark pre-engineered industrial buildings, modern warehouses, and structural steel installations executed across India.
+              </p>
+            </div>
+            <Link
+              to="/portfolio"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-accent hover:text-orange-600 transition duration-300 shrink-0"
+            >
+              View all 300+ projects <ArrowRight size={16} />
+            </Link>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {recentProjects.map((project) => {
+              const projectSlug = project.slug || project.id;
+              return (
+                <article
+                  key={project.id || project._id}
+                  className="group flex flex-col overflow-hidden rounded-xl bg-white border border-slate-200/90 shadow-sm hover:shadow-md hover:border-slate-300 transition-all duration-300"
+                >
+                  <Link
+                    to="/portfolio/$id"
+                    params={{ id: projectSlug }}
+                    className="aspect-[16/10] overflow-hidden bg-slate-950 block relative"
+                  >
+                    <img
+                      src={project.image || (project.gallery && project.gallery[0])}
+                      alt={project.title}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                    {project.category && (
+                      <span className="absolute top-3 left-3 rounded-md bg-slate-950/80 backdrop-blur-sm px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-accent border border-white/10">
+                        {project.category}
+                      </span>
+                    )}
+                  </Link>
+                  <div className="p-6 flex flex-col flex-1">
+                    {project.location && (
+                      <div className="flex items-center gap-1.5 text-xs font-semibold text-slate-500 mb-2">
+                        <MapPin size={13} className="text-accent shrink-0" />
+                        <span className="truncate">{project.location}</span>
+                      </div>
+                    )}
+                    <h3 className="font-display text-lg font-bold leading-snug text-slate-900 group-hover:text-accent transition duration-300 line-clamp-2">
+                      <Link to="/portfolio/$id" params={{ id: projectSlug }}>
+                        {project.title}
+                      </Link>
+                    </h3>
+                    <p className="mt-2.5 text-xs sm:text-sm text-slate-600 line-clamp-3 leading-relaxed flex-1">
+                      {project.shortDescription || (project.description ? project.description.replace(/<[^>]*>/g, "").substring(0, 140) + "..." : "")}
+                    </p>
+                    <div className="mt-5 pt-4 border-t border-slate-100 flex items-center justify-between">
+                      <Link
+                        to="/portfolio/$id"
+                        params={{ id: projectSlug }}
+                        className="inline-flex items-center gap-1.5 text-xs font-bold text-accent hover:text-orange-600 transition duration-300"
+                      >
+                        View Project <ArrowRight size={13} className="transition-transform group-hover:translate-x-1" />
+                      </Link>
+                      {project.specifications?.area && (
+                        <span className="text-[11px] font-semibold text-slate-500 bg-slate-50 px-2 py-0.5 rounded border border-slate-200">
+                          {project.specifications.area}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </article>
+              );
+            })}
+          </div>
         </div>
       </section>
 

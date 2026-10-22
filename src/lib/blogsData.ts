@@ -13,6 +13,8 @@ export interface BlogPost {
   metaTitle?: string;
   metaDescription?: string;
   isPublished?: boolean;
+  scheduledAt?: string;
+  status?: "published" | "scheduled" | "draft";
   fontStyle?: string;
   createdAt?: string;
   updatedAt?: string;
